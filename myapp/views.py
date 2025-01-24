@@ -39,10 +39,12 @@ class CustomLoginView(LoginView):
     template_name = 'login.html'  # Giriş sayfası şablonu
     redirect_authenticated_user = True  # Giriş yapmış kullanıcıyı doğrudan yönlendir
 
+@login_required
 def custom_logout(request):
     logout(request)  # Kullanıcıyı çıkış yapar
     return HttpResponseRedirect('/login/')  # Çıkış yapıldıktan sonra login sayfasına yönlendir
 
+@login_required
 def user_status(request):
     # Son 10 dakika içinde aktif olan kullanıcıları bulma
     active_time_threshold = timezone.now() - timedelta(minutes=10)

@@ -8,5 +8,5 @@ urlpatterns = [
     path('filtersbycomment/', views.filtersbycomment, name='filtersbycomment'),
     path('login/', CustomLoginView.as_view(), name='login'),
     path('logout/', views.custom_logout, name='logout'),  # Logout URL'si
-    path('user-status/', views.user_status, name='user_status'),
+    path('user_status/', views.user_status, name='user_status'),
 ]
