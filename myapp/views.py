@@ -7,6 +7,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
+from django.contrib.auth.models import User
+from django.utils import timezone
+from datetime import timedelta
+
+
 
 @login_required
 def index(request):
@@ -38,3 +43,15 @@ def custom_logout(request):
     logout(request)  # Kullanıcıyı çıkış yapar
     return HttpResponseRedirect('/login/')  # Çıkış yapıldıktan sonra login sayfasına yönlendir
 
+def user_status(request):
+    # Son 10 dakika içinde aktif olan kullanıcıları bulma
+    active_time_threshold = timezone.now() - timedelta(minutes=10)
+
+    # Aktif ve pasif kullanıcıları ayırmak
+    active_users = User.objects.filter(last_login__gte=active_time_threshold)
+    passive_users = User.objects.filter(last_login__lt=active_time_threshold)
+
+    return render(request, 'user_status.html', {
+        'active_users': active_users,
+        'passive_users': passive_users,
+    })

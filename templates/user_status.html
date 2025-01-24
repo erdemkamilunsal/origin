@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load custom_tags %}
+{% block title %} eBrandValue - Latest Data from Social Media Channels {% endblock %}
+
+
+{% block content %}
+    <style>
+        /* Genel Sayfa Tasarımı */
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #6e7fdb, #3a4b95);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin-top: 50px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* Tablo stili */
+        .table {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .table th {
+            background-color: #1f2743;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .table td {
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .badge-active, .badge-passive {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .badge-active {
+            background-color: #28a745;
+        }
+
+        .badge-passive {
+            background-color: #dc3545;
+        }
+
+        /* Hover Efekti */
+        .table tbody tr:hover {
+            background-color: #34495e;
+            cursor: pointer;
+        }
+
+        /* Mobil Uyumu */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .table-responsive {
+                overflow-x: scroll;
+            }
+        }
+    </style>
+
+
+
+    <!-- Aktif Kullanıcılar Tablosu -->
+    <div class="table-responsive">
+        <h2 class="text-center text-light mb-4">Aktif Kullanıcılar</h2>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Kullanıcı Adı</th>
+                    <th>Son Giriş Zamanı</th>
+                    <th>Durum</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in active_users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.last_login }}</td>
+                    <td><span class="badge-active badge">Aktif</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">Aktif kullanıcı bulunmuyor.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pasif Kullanıcılar Tablosu -->
+    <div class="table-responsive">
+        <h2 class="text-center text-light mb-4">Pasif Kullanıcılar</h2>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Kullanıcı Adı</th>
+                    <th>Son Giriş Zamanı</th>
+                    <th>Durum</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in passive_users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.last_login }}</td>
+                    <td><span class="badge-passive badge">Pasif</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">Pasif kullanıcı bulunmuyor.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- Bootstrap JS ve Bağımlılıkları -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gyb6E6k9u12X+aJ5j5p4sKmf9D6yZJqD5h5Bh4gxw2bbV3wA4k" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq0xM25X/Wp7Y5zXc2JvxtuVuTtW9HkKzsa6t6p2Rg7sbhFvEv" crossorigin="anonymous"></script>
+
+{% endblock %}
