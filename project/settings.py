@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp',
-    'django_celery_beat',
 ]
 
 
@@ -53,11 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Redis adresi
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
+
 LOGIN_URL = '/login/'  # Giriş yapılmamışsa kullanıcıyı yönlendirecek URL
 LOGIN_REDIRECT_URL = '/'  # Girişten sonra yönlendirme yapılacak URL
 LOGOUT_REDIRECT_URL = '/login/'  # Çıkıştan sonra yönlendirme yapılacak URL
