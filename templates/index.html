@@ -1,56 +1,129 @@
 {% extends 'base.html' %}
-{% load static %}
-{% load custom_tags %}
-{% block title %} eBrandValue - Latest Data from Social Media Channels {% endblock %}
-
-{% block menu %} {% endblock %}
-
 
 {% block content %}
-<main class="body py-5 bg-light">
-    <div class="container">
-        <div class="table-responsive">
-            <table class="table table-striped table-hover table-bordered body-table">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Channel</th>
-                        <th>Title</th>
-                        <th>Created</th>
-                        <th>Name</th>
-                        <th>Username</th>
-                        <th>Follower Count</th>
-                        <th>Content</th>
-                        <th>Link</th>
-                    </tr>
-                </thead>
-            <tbody>
-                {% if latest_data %}
-                    {% for channel, data in latest_data.items %}
-                        <tr>
-                            <td><img src="{% static 'images/'|add:channel|add:'.png' %}" width="16" height="16" title="{{ channel }}"></td>
-                            <td>{{ channel|title }}</td>
-                            <td class="created-time-column">{{ data.created_time|date:"d.m.Y-H:i:s" }}</td>
-                            <td>{{ data.author_name|slice:":30" }}{% if data.body|length > 100 %}...{% endif %}</td>
-                            <td>{{ data.author_nick }}</td>
-                            <td class="created-time-column">{{ data.author_follower_count }}</td>
-                            <td>{{ data.body|slice:":100" }}{% if data.body|length > 100 %}...{% endif %}</td>
-                            <td>
-                                {% if data.link %}
-                                    <a href="{{ data.link }}" target="_blank">Go to Link</a>
-                                {% else %}
-                                    No Link
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="7" class="text-center">No data available</td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
-    </section>
-</main>
+    <div class="container mt-4">
+        <h1 class="text-center">Sosyal Medya Verileri</h1>
 
+        {% for base_url, categories in base_url_data.items %}
+            <h2 class="mt-4">{{ base_url }} Verileri</h2>
+
+            <!-- Finans - Corporate Tablosu -->
+            {% if "corporate" in categories %}
+                <h3>Corporate Kategorisi</h3>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Kaynak Kategori</th>
+                                <th>Yazar Adı</th>
+                                <th>Yazar Takma Adı</th>
+                                <th>Yazar Takipçi Sayısı</th>
+                                <th>İçerik</th>
+                                <th>Kaynak</th>
+                                <th>Link</th>
+                                <th>Oluşturulma Zamanı</th>
+                                <th>Selective Part</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in categories.corporate %}
+                                <tr>
+                                    <td>{{ data.source_category }}</td>
+                                    <td>{{ data.author_name }}</td>
+                                    <td>{{ data.author_nick }}</td>
+                                    <td>{{ data.author_follower_count }}</td>
+                                    <td>{{ data.body }}</td>
+                                    <td>{{ data.source }}</td>
+                                    <td><a href="{{ data.link }}" target="_blank">{{ data.link }}</a></td>
+                                    <td>{{ data.created_time }}</td>
+                                    <td>{{ data.selective_part }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr><td colspan="9" class="text-center">Veri bulunamadı.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+            <!-- Finans - Selective Tablosu -->
+            {% if "selective" in categories %}
+                <h3>Selective Kategorisi</h3>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Kaynak Kategori</th>
+                                <th>Yazar Adı</th>
+                                <th>Yazar Takma Adı</th>
+                                <th>Yazar Takipçi Sayısı</th>
+                                <th>İçerik</th>
+                                <th>Kaynak</th>
+                                <th>Link</th>
+                                <th>Oluşturulma Zamanı</th>
+                                <th>Selective Part</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in categories.selective %}
+                                <tr>
+                                    <td>{{ data.source_category }}</td>
+                                    <td>{{ data.author_name }}</td>
+                                    <td>{{ data.author_nick }}</td>
+                                    <td>{{ data.author_follower_count }}</td>
+                                    <td>{{ data.body }}</td>
+                                    <td>{{ data.source }}</td>
+                                    <td><a href="{{ data.link }}" target="_blank">{{ data.link }}</a></td>
+                                    <td>{{ data.created_time }}</td>
+                                    <td>{{ data.selective_part }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr><td colspan="9" class="text-center">Veri bulunamadı.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+            <!-- Finans - Primary Tablosu -->
+            {% if "primary" in categories %}
+                <h3>Primary Kategorisi</h3>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Kaynak Kategori</th>
+                                <th>Yazar Adı</th>
+                                <th>Yazar Takma Adı</th>
+                                <th>Yazar Takipçi Sayısı</th>
+                                <th>İçerik</th>
+                                <th>Kaynak</th>
+                                <th>Link</th>
+                                <th>Oluşturulma Zamanı</th>
+                                <th>Selective Part</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in categories.primary %}
+                                <tr>
+                                    <td>{{ data.source_category }}</td>
+                                    <td>{{ data.author_name }}</td>
+                                    <td>{{ data.author_nick }}</td>
+                                    <td>{{ data.author_follower_count }}</td>
+                                    <td>{{ data.body }}</td>
+                                    <td>{{ data.source }}</td>
+                                    <td><a href="{{ data.link }}" target="_blank">{{ data.link }}</a></td>
+                                    <td>{{ data.created_time }}</td>
+                                    <td>{{ data.selective_part }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr><td colspan="9" class="text-center">Veri bulunamadı.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+        {% endfor %}
+    </div>
 {% endblock %}

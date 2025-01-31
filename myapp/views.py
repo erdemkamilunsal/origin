@@ -1,6 +1,6 @@
 # views.py
 from django.shortcuts import render
-from .models import ChannelData
+from .models import ChannelData,ScraperLog
 from django.db.models import Max
 import datetime
 from django.contrib.auth.decorators import login_required
@@ -15,22 +15,28 @@ from datetime import timedelta
 
 @login_required
 def index(request):
-    # Tüm sosyal medya kanalları
-    channels = [
-        "twitter", "facebook", "facebook_page_comment", "facebook_page_like",
-        "youtube", "youtube_shorts", "instagram", "instagram_comment",
-        "tiktok", "pinterest", "rss", "apple_app_store_comment",
-        "google_play_store_comment", "linkedin", "donanimhaber", "eksi_sozluk",
-        "inci_sozluk", "sikayetvar", "uludag_sozluk"
-    ]
+    base_url_data = {}
 
-    # Her kanaldan en güncel veriyi çek
-    latest_data = {}
-    for channel in channels:
-        data = ChannelData.objects.filter(source=channel).order_by('-created_time').first()
-        if data:
-            latest_data[channel] = data
-    return render(request, 'index.html', {'latest_data': latest_data})
+    # Belirtilen base URL'ler
+    base_urls = ["finans", "mey", "snacks-tr", "mey-international"]
+
+    # Kategoriler: corporate, selective, primary
+    categories = ["corporate", "selective", "primary"]
+
+    for base_url in base_urls:
+        category_data = {}
+        for category in categories:
+            # Bu base_url ve category için en son eklenen veriyi alıyoruz
+            channel_data = ChannelData.objects.filter(source_category=base_url, selective_part=category).order_by('-created_time')
+
+            # Veriyi ilgili kategoriye ekliyoruz
+            category_data[category] = channel_data
+
+        # Tüm kategorilerle birlikte base_url'i base_url_data'ya ekliyoruz
+        base_url_data[base_url] = category_data
+
+    # Verileri index.html'e gönderiyoruz
+    return render(request, 'index.html', {'base_url_data': base_url_data})
 
 def filtersbycomment(request):
     return render(request, 'filtersbycomment.html')
@@ -56,4 +62,33 @@ def user_status(request):
     return render(request, 'user_status.html', {
         'active_users': active_users,
         'passive_users': passive_users,
+    })
+
+def finance_corporate(request):
+    data = ChannelData.objects.filter(source_category="finans", selective_part="corporate")
+    return render(request, 'base.html', {'finance_data': data})
+
+def finance_selective(request):
+    data = ChannelData.objects.filter(source_category="finans", selective_part="selective")
+    return render(request, 'base.html', {'finance_data': data})
+
+def finance_primary(request):
+    data = ChannelData.objects.filter(source_category="finans", selective_part="primary")
+    return render(request, 'base.html', {'finance_data': data})
+
+def index(request):
+    # Scraper son güncelleme tarihini alıyoruz
+    last_update = ScraperLog.objects.first()  # En son güncellenen log kaydını alıyoruz
+
+    if last_update:
+        last_update_time = last_update.last_update
+    else:
+        last_update_time = "Veri bulunamadı"  # Eğer hiç log yoksa
+
+    # finance_data verilerini alıyoruz
+    finance_data = ChannelData.objects.filter(source_category='finans')
+
+    return render(request, '', {
+        'finance_data': finance_data,
+        'last_update': last_update_time
     })
