@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Finans - Primary{% endblock %}
+
+{% block content %}
+    <h1>Finans Primary Verileri</h1>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr style="vertical-align: middle; text-align: center;">
+                    <th scope="col" style="width: 15%;">Yazar Adı</th>
+                    <th scope="col" style="width: 15%;">Yazar Takma Adı</th>
+                    <th scope="col" style="width: 15%;">Takipçi Sayısı</th>
+                    <th scope="col" style="width: 25%;">Mesaj</th>
+                    <th scope="col" style="width: 10%;">Kaynak</th>
+                    <th scope="col" style="width: 10%;">Bağlantı</th>
+                    <th scope="col" style="width: 10%;">Zaman</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in data %}
+                    <tr style="height: 20px; vertical-align: middle; text-align: center;">
+                        <td style="width: 15%;">{{ item.author_name|slice:":10" }}</td>
+                        <td style="width: 15%;">{{ item.author_nick|slice:":10" }}</td>
+                        <td style="width: 15%;">{{ item.author_follower_count }}</td>
+                        <td style="width: 25%;">{{ item.body|slice:":100" }}</td>
+                        <td style="width: 10%;">{{ item.source }}</td>
+                        <td style="width: 10%;"><a href="{{ item.link }}" target="_blank">Bağlantıya Git</a></td>
+                        <td style="width: 10%;">{{ item.created_time }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -28,19 +28,19 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
 
         base_urls = {
-            "finans": ["corporate"],
-            #"mey": ["primary", "selective"],
-            #"snacks-tr": ["corporate", "primary", "selective" ,"corprimary", "pladis_categories"],
-            #"mey-international": ["primary"]
+            "finans": ["corporate","selective","primary"],
+            "mey": ["primary", "selective"],
+            "snacks-tr": ["corporate", "primary", "selective" ,"corprimary", "pladis_categories"],
+            "mey-international": ["primary"]
         }
 
         channels_to_find = {
-            "twitter"
-            #"facebook", "facebook_page_comment", "facebook_page_like",
-            #"youtube", "youtube_shorts", "instagram", "instagram_comment",
-            #"tiktok", "pinterest", "rss", "apple_app_store_comment",
-            #"google_play_store_comment", "linkedin", "donanimhaber", "eksi_sozluk",
-            #"inci_sozluk", "sikayetvar", "uludag_sozluk"
+            "twitter",
+            "facebook", "facebook_page_comment", "facebook_page_like",
+            "youtube", "youtube_shorts", "instagram", "instagram_comment",
+            "tiktok", "pinterest", "rss", "apple_app_store_comment",
+            "google_play_store_comment", "linkedin", "donanimhaber", "eksi_sozluk",
+            "inci_sozluk", "sikayetvar", "uludag_sozluk"
         }
 
         istanbul_tz = pytz.timezone('Europe/Istanbul')
@@ -84,10 +84,8 @@ class Command(BaseCommand):
 
                 print(f"{base_url} için veri çekiliyor...")
 
-
                 for selective in selective_parts:
                     result = {}
-
 
                     for channel in channels_to_find:
                         current_url = f"https://{base_url}.ebrandvalue.com/industries/{selective}/social/posts/?path_param=posts&source={channel}&start=0"
@@ -120,18 +118,16 @@ class Command(BaseCommand):
                         else:
                             print(f"{channel} kanalı için {base_url} - {selective} kategorisinde veri bulunamadı.")
 
-
                     for channel, data in result.items():
+                        if data:  # Yeni veri varsa işlem yap
+                            # Önce eski kayıtları sil
+                            ChannelData.objects.filter(
+                                source_category=data.get("source_category"),
+                                selective_part=data.get("selective_part"),
+                                source=data.get("source")
+                            ).delete()
 
-                        existing_data = ChannelData.objects.filter(
-                            source_category=data.get("source_category"),
-                            selective_part=data.get("selective_part"),
-                            created_time=data.get("created_time"),
-                            source=data.get('source')
-                        ).first()
-
-
-                        if not existing_data:
+                            # Yeni veriyi kaydet
                             ChannelData.objects.create(
                                 source_category=data.get("source_category"),
                                 author_name=data.get("author_name"),
@@ -142,12 +138,11 @@ class Command(BaseCommand):
                                 link=data.get("link"),
                                 created_time=data.get("created_time"),
                                 selective_part=data.get("selective_part"),
-
                             )
-                            print(f"{data.get('selective_part')} - {data.get('created_time')} kaydedildi.")
+                            print(
+                                f"{data.get('selective_part')} - {data.get('created_time')} güncellendi ve kaydedildi.")
                         else:
-                            print(f"{data.get('selective_part')} - {data.get('created_time')} zaten mevcut, kaydedilmedi.")
-
+                            print(f"{channel} için yeni veri bulunamadı, eski kayıtlar silinmedi.")
 
         self.stdout.write(self.style.SUCCESS("Tüm veriler başarıyla kaydedildi!"))
 

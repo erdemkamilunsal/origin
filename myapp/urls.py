@@ -1,15 +1,24 @@
 from django.urls import path
 from . import views
-from .views import CustomLoginView
-from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
-    path('', views.index, name='index'),  # Ana sayfa için index view
-    path('filtersbycomment/', views.filtersbycomment, name='filtersbycomment'),
-    path('login/', CustomLoginView.as_view(), name='login'),
-    path('logout/', views.custom_logout, name='logout'),  # Logout URL'si
-    path('user_status/', views.user_status, name='user_status'),
+
+
+    # Finans Kategorisi
     path('finance/corporate/', views.finance_corporate, name='finance_corporate'),
     path('finance/selective/', views.finance_selective, name='finance_selective'),
     path('finance/primary/', views.finance_primary, name='finance_primary'),
+
+    # Mey Kategorisi
+    path('mey/selective/', views.mey_selective, name='mey_selective'),
+    path('mey/primary/', views.mey_primary, name='mey_primary'),
+
+    # Snacks-tr Kategorisi
+    path('snacks/corporate/', views.snacks_corporate, name='snacks_corporate'),
+    path('snacks/selective/', views.snacks_selective, name='snacks_selective'),
+    path('snacks/primary/', views.snacks_primary, name='snacks_primary'),
+
+    # Mey-International Kategorisi
+    path('mey_int/primary/', views.mey_int_primary, name='mey_int_primary'),  # Düzeltilmiş
 ]
+
