@@ -20,3 +20,19 @@ class ScraperLog(models.Model):
 
     def __str__(self):
         return f"Last update: {self.last_update}"
+
+class LatestDataTable(models.Model):
+    source_category = models.CharField(max_length=255)
+    selective_part = models.CharField(max_length=255)
+    source = models.CharField(max_length=255)
+    created_time = models.DateField()
+    author = models.CharField(max_length=255, default='Unknown')  # Varsayılan değer ekleniyor
+    total = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.created_time} - {self.source_category} - {self.selective_part} - {self.source}"
+
+    class Meta:
+        verbose_name = "Son 7 Günlük Veri"
+        verbose_name_plural = "Son 7 Günlük Veriler"
+

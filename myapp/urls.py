@@ -20,5 +20,8 @@ urlpatterns = [
 
     # Mey-International Kategorisi
     path('mey_int/primary/', views.mey_int_primary, name='mey_int_primary'),  # Düzeltilmiş
+
+    path('', views.finance_twitter_chart, name='finance_twitter_chart'),
+
 ]
 

@@ -1,12 +1,15 @@
 import time
+from functools import total_ordering
 import requests
 from bs4 import BeautifulSoup
 import json
 import datetime
 from unidecode import unidecode
+from datetime import timedelta
+import urllib.parse
 import pytz
 import django
-from myapp.models import ChannelData
+from myapp.models import ChannelData, LatestDataTable
 from django.core.management.base import BaseCommand
 from datetime import datetime
 from myapp.models import ScraperLog
@@ -18,25 +21,20 @@ def update_scraper_log():
     else:
         ScraperLog.objects.create()  # İlk defa çalışıyorsa yeni bir kayıt oluştur
 
-
-
 class Command(BaseCommand):
     help = "Sosyal medya verilerini çekip kaydeder"
-
-
 
     def handle(self, *args, **kwargs):
 
         base_urls = {
-            "finans": ["corporate","selective","primary"],
+            "finans": ["corporate", "selective", "primary"],
             "mey": ["primary", "selective"],
-            "snacks-tr": ["corporate", "primary", "selective" ,"corprimary", "pladis_categories"],
+            "snacks-tr": ["corporate", "primary", "selective", "corprimary", "pladis_categories"],
             "mey-international": ["primary"]
         }
 
         channels_to_find = {
-            "twitter",
-            "facebook", "facebook_page_comment", "facebook_page_like",
+            "twitter", "facebook", "facebook_page_comment", "facebook_page_like",
             "youtube", "youtube_shorts", "instagram", "instagram_comment",
             "tiktok", "pinterest", "rss", "apple_app_store_comment",
             "google_play_store_comment", "linkedin", "donanimhaber", "eksi_sozluk",
@@ -84,8 +82,9 @@ class Command(BaseCommand):
 
                 print(f"{base_url} için veri çekiliyor...")
 
+                # Veri çekme kısmı
                 for selective in selective_parts:
-                    result = {}
+                    result = []  # result burada bir liste olarak oluşturulacak
 
                     for channel in channels_to_find:
                         current_url = f"https://{base_url}.ebrandvalue.com/industries/{selective}/social/posts/?path_param=posts&source={channel}&start=0"
@@ -104,7 +103,7 @@ class Command(BaseCommand):
                                 body = entry['content'].get('body', None)
                                 body = unidecode(body) if body else None
 
-                                result[channel] = {
+                                result.append({
                                     "source_category": base_url,
                                     "author_name": entry['author'].get('name', None),
                                     "author_nick": entry['author'].get('nick', None),
@@ -114,12 +113,13 @@ class Command(BaseCommand):
                                     "link": entry['content'].get('link', None),
                                     "created_time": entry['content'].get('create_time', None),
                                     "selective_part": selective
-                                }
+                                })
                         else:
                             print(f"{channel} kanalı için {base_url} - {selective} kategorisinde veri bulunamadı.")
 
-                    for channel, data in result.items():
-                        if data:  # Yeni veri varsa işlem yap
+                    # Yeni veriyi kaydetme işlemi
+                    if result:  # Eğer veri varsa işlemi yap
+                        for data in result:
                             # Önce eski kayıtları sil
                             ChannelData.objects.filter(
                                 source_category=data.get("source_category"),
@@ -139,10 +139,52 @@ class Command(BaseCommand):
                                 created_time=data.get("created_time"),
                                 selective_part=data.get("selective_part"),
                             )
-                            print(
-                                f"{data.get('selective_part')} - {data.get('created_time')} güncellendi ve kaydedildi.")
-                        else:
-                            print(f"{channel} için yeni veri bulunamadı, eski kayıtlar silinmedi.")
+                            print(f"{data.get('selective_part')} - {data.get('created_time')} güncellendi ve kaydedildi.")
+                    else:
+                        print(f"{selective} kategorisinde yeni veri bulunamadı.")
+
+                    # Son 7 gün verisi çekme kısmı
+                    print(f"{base_url} için son 7 günlük veriler çekiliyor...")
+                    today = datetime.now(istanbul_tz)
+                    for i in range(7):  # Son 7 gün için döngü başlatıyoruz
+                        date_start = today - timedelta(days=i)
+                        date_end = today - timedelta(days=i - 1)
+
+                        since_str = date_start.strftime("%d.%m.%Y 00:00").replace(" ", "%20")
+                        until_str = date_end.strftime("%d.%m.%Y 00:00").replace(" ", "%20")
+
+                        for channel in channels_to_find:  # Her sosyal medya kanalı için
+                            extra_url = f"https://{base_url}.ebrandvalue.com/industries/{selective}/social/posts/?path_param=posts&source={channel}&since={since_str}&until={until_str}"
+                            print(f"{extra_url} verisi çekiliyor...")
+
+                            response = session.get(extra_url)
+                            if response.status_code != 200:
+                                print(f"{since_str} - {base_url} için {channel} verisi bulunamadı veya geçersiz.")
+                                continue
+
+                            parsed_data = json.loads(response.text)
+                            paging_data = parsed_data.get('paging', {})
+
+                            author_count = paging_data.get("authors", 0)
+                            content_count = paging_data.get("total", 0)
+
+                            # Veritabanını güncelleme
+                            LatestDataTable.objects.filter(
+                                source_category=base_url,
+                                selective_part=selective,
+                                source=channel,
+                                created_time=date_start
+                            ).delete()
+
+                            LatestDataTable.objects.create(
+                                source_category=base_url,
+                                selective_part=selective,
+                                source=channel,
+                                created_time=date_start,
+                                author=author_count,
+                                total=content_count
+                            )
+                            print(f"✅ {since_str} - {base_url} - {selective} - {channel} için yazar: {author_count}, içerik: {content_count} kaydedildi.")
 
         self.stdout.write(self.style.SUCCESS("Tüm veriler başarıyla kaydedildi!"))
 

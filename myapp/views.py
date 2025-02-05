@@ -1,6 +1,12 @@
-from django.shortcuts import render
-from .models import ChannelData
+from django.shortcuts import render, redirect
+from .models import ChannelData, LatestDataTable
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+import json
+from datetime import datetime, timedelta
+from django.db.models import Sum
+
+
 
 
 @login_required
@@ -47,3 +53,33 @@ def snacks_corporate(request):
 def mey_int_primary(request):
     data = ChannelData.objects.filter(source_category="mey-international", selective_part="primary")
     return render(request, 'mey_int_primary.html', {'data': data})
+
+
+# views.py
+from django.shortcuts import render
+from datetime import datetime, timedelta
+from myapp.models import LatestDataTable
+import json
+
+
+def finance_twitter_chart(request):
+    today = datetime.now()
+    last_7_days = [(today - timedelta(days=i)).date() for i in range(7)]  # 7 günlük veri
+
+    data = []
+    for day in last_7_days:
+        # Her gün için toplam içerik sayısını alıyoruz
+        total_content = LatestDataTable.objects.filter(
+            source_category='finans',
+            selective_part='corporate',
+            source='twitter',
+            created_time=day
+        ).aggregate(total_content=Sum('total'))['total_content'] or 0  # Veri yoksa 0
+
+        # Date objesini string'e çeviriyoruz
+        data.append({
+            'date': day.strftime('%Y-%m-%d'),  # Tarihi 'YYYY-MM-DD' formatına çeviriyoruz
+            'total_content': total_content
+        })
+
+    return render(request, 'index.html', {'data': json.dumps(data)})

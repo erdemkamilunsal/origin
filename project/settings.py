@@ -54,8 +54,8 @@ MIDDLEWARE = [
 
 
 LOGIN_URL = '/login/'  # Giriş yapılmamışsa kullanıcıyı yönlendirecek URL
-LOGIN_REDIRECT_URL = '/'  # Girişten sonra yönlendirme yapılacak URL
 LOGOUT_REDIRECT_URL = '/login/'  # Çıkıştan sonra yönlendirme yapılacak URL
+LOGIN_REDIRECT_URL = '/'  # Girişten sonra yönlendirme yapılacak URL
 
 
 ROOT_URLCONF = 'project.urls'

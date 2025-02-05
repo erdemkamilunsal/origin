@@ -1,129 +1,60 @@
-{% extends 'base.html' %}
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7 Günlük Veriler</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <!-- Chart.js kütüphanesini dahil ediyoruz -->
+</head>
+<body>
+    <h1>Finans Corporate Twitter 7 Günlük Verisi</h1>
 
-{% block content %}
-    <div class="container mt-4">
-        <h1 class="text-center">Sosyal Medya Verileri</h1>
+    <!-- Grafik alanı -->
+    <canvas id="myChart" width="400" height="200"></canvas>
 
-        {% for base_url, categories in base_url_data.items %}
-            <h2 class="mt-4">{{ base_url }} Verileri</h2>
+    <script>
+        // Django'dan gelen veri (views.py'den gönderilen 'data' değişkeni)
+        var chartData = {{ data|safe }};
 
-            <!-- Finans - Corporate Tablosu -->
-            {% if "corporate" in categories %}
-                <h3>Corporate Kategorisi</h3>
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Kaynak Kategori</th>
-                                <th>Yazar Adı</th>
-                                <th>Yazar Takma Adı</th>
-                                <th>Yazar Takipçi Sayısı</th>
-                                <th>İçerik</th>
-                                <th>Kaynak</th>
-                                <th>Link</th>
-                                <th>Oluşturulma Zamanı</th>
-                                <th>Selective Part</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for data in categories.corporate %}
-                                <tr>
-                                    <td>{{ data.source_category }}</td>
-                                    <td>{{ data.author_name }}</td>
-                                    <td>{{ data.author_nick }}</td>
-                                    <td>{{ data.author_follower_count }}</td>
-                                    <td>{{ data.body }}</td>
-                                    <td>{{ data.source }}</td>
-                                    <td><a href="{{ data.link }}" target="_blank">{{ data.link }}</a></td>
-                                    <td>{{ data.created_time }}</td>
-                                    <td>{{ data.selective_part }}</td>
-                                </tr>
-                            {% empty %}
-                                <tr><td colspan="9" class="text-center">Veri bulunamadı.</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
+        // Veriyi Chart.js için uygun formata dönüştür
+        var dates = chartData.map(function(item) { return item.date; });
+        var totalContent = chartData.map(function(item) { return item.total_content; });
 
-            <!-- Finans - Selective Tablosu -->
-            {% if "selective" in categories %}
-                <h3>Selective Kategorisi</h3>
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Kaynak Kategori</th>
-                                <th>Yazar Adı</th>
-                                <th>Yazar Takma Adı</th>
-                                <th>Yazar Takipçi Sayısı</th>
-                                <th>İçerik</th>
-                                <th>Kaynak</th>
-                                <th>Link</th>
-                                <th>Oluşturulma Zamanı</th>
-                                <th>Selective Part</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for data in categories.selective %}
-                                <tr>
-                                    <td>{{ data.source_category }}</td>
-                                    <td>{{ data.author_name }}</td>
-                                    <td>{{ data.author_nick }}</td>
-                                    <td>{{ data.author_follower_count }}</td>
-                                    <td>{{ data.body }}</td>
-                                    <td>{{ data.source }}</td>
-                                    <td><a href="{{ data.link }}" target="_blank">{{ data.link }}</a></td>
-                                    <td>{{ data.created_time }}</td>
-                                    <td>{{ data.selective_part }}</td>
-                                </tr>
-                            {% empty %}
-                                <tr><td colspan="9" class="text-center">Veri bulunamadı.</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
-
-            <!-- Finans - Primary Tablosu -->
-            {% if "primary" in categories %}
-                <h3>Primary Kategorisi</h3>
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Kaynak Kategori</th>
-                                <th>Yazar Adı</th>
-                                <th>Yazar Takma Adı</th>
-                                <th>Yazar Takipçi Sayısı</th>
-                                <th>İçerik</th>
-                                <th>Kaynak</th>
-                                <th>Link</th>
-                                <th>Oluşturulma Zamanı</th>
-                                <th>Selective Part</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for data in categories.primary %}
-                                <tr>
-                                    <td>{{ data.source_category }}</td>
-                                    <td>{{ data.author_name }}</td>
-                                    <td>{{ data.author_nick }}</td>
-                                    <td>{{ data.author_follower_count }}</td>
-                                    <td>{{ data.body }}</td>
-                                    <td>{{ data.source }}</td>
-                                    <td><a href="{{ data.link }}" target="_blank">{{ data.link }}</a></td>
-                                    <td>{{ data.created_time }}</td>
-                                    <td>{{ data.selective_part }}</td>
-                                </tr>
-                            {% empty %}
-                                <tr><td colspan="9" class="text-center">Veri bulunamadı.</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
-
-        {% endfor %}
-    </div>
-{% endblock %}
+        // Grafik için Chart.js yapılandırması
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',  // Çizgi grafik
+            data: {
+                labels: dates,  // X ekseni: Tarihler
+                datasets: [{
+                    label: 'Toplam İçerik Sayısı',
+                    data: totalContent,  // Y ekseni: İçerik sayıları
+                    borderColor: 'rgba(75, 192, 192, 1)',  // Çizgi rengini belirleyin
+                    borderWidth: 1,  // Çizgi kalınlığını belirleyin
+                    fill: false,  // Alanı doldurmayı devre dışı bırak
+                    tension: 0.4  // Çizgilerin ne kadar kavisli olacağını ayarlayın
+                }]
+            },
+            options: {
+                responsive: true,  // Ekran boyutuna duyarlı hale getirin
+                scales: {
+                    y: {
+                        beginAtZero: true,  // Y ekseni sıfırdan başlasın
+                        title: {
+                            display: true,
+                            text: 'Toplam İçerik Sayısı'  // Y ekseni başlığı
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tarih'  // X ekseni başlığı
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
