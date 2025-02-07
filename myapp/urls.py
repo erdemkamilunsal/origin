@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from .views import index
+
 
 urlpatterns = [
 
@@ -21,7 +23,7 @@ urlpatterns = [
     # Mey-International Kategorisi
     path('mey_int/primary/', views.mey_int_primary, name='mey_int_primary'),  # Düzeltilmiş
 
-    path('', views.finance_twitter_chart, name='finance_twitter_chart'),
+    path('', index, name='index'),  # Ana sayfa olarak index view'ı
 
 ]
 

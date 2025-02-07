@@ -1,60 +1,88 @@
-<!-- index.html -->
+{% extends "base.html" %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>7 Günlük Veriler</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <!-- Chart.js kütüphanesini dahil ediyoruz -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .chart {
+            width: 32%;  /* Her grafik için üçte bir genişlik */
+            margin-bottom: 20px;
+        }
+        canvas {
+            max-width: 100%;
+            height: 300px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Finans Corporate Twitter 7 Günlük Verisi</h1>
+    <h1>Instagram Comment - 7 Günlük Veriler</h1>
 
-    <!-- Grafik alanı -->
-    <canvas id="myChart" width="400" height="200"></canvas>
+    <div class="chart-container" id="charts-container">
+        <!-- Grafikler buraya eklenecek -->
+    </div>
 
     <script>
-        // Django'dan gelen veri (views.py'den gönderilen 'data' değişkeni)
-        var chartData = {{ data|safe }};
+        var industryData = JSON.parse('{{ industry_data|escapejs }}');
+        var chartsContainer = document.getElementById('charts-container');
+        var colors = ['#FF5733', '#33FF57', '#3357FF', '#F3FF33', '#FF33F6', '#33F6FF'];
+        var index = 0;
 
-        // Veriyi Chart.js için uygun formata dönüştür
-        var dates = chartData.map(function(item) { return item.date; });
-        var totalContent = chartData.map(function(item) { return item.total_content; });
+        var baseUrls = {
+            "finans": ["corporate", "selective", "primary"],
+            "mey": ["primary", "selective"],
+            "snacks-tr": ["corporate", "primary", "selective", "corprimary", "pladis_categories"],
+            "mey-international": ["primary"]
+        };
 
-        // Grafik için Chart.js yapılandırması
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'line',  // Çizgi grafik
-            data: {
-                labels: dates,  // X ekseni: Tarihler
-                datasets: [{
-                    label: 'Toplam İçerik Sayısı',
-                    data: totalContent,  // Y ekseni: İçerik sayıları
-                    borderColor: 'rgba(75, 192, 192, 1)',  // Çizgi rengini belirleyin
-                    borderWidth: 1,  // Çizgi kalınlığını belirleyin
-                    fill: false,  // Alanı doldurmayı devre dışı bırak
-                    tension: 0.4  // Çizgilerin ne kadar kavisli olacağını ayarlayın
-                }]
-            },
-            options: {
-                responsive: true,  // Ekran boyutuna duyarlı hale getirin
-                scales: {
-                    y: {
-                        beginAtZero: true,  // Y ekseni sıfırdan başlasın
-                        title: {
-                            display: true,
-                            text: 'Toplam İçerik Sayısı'  // Y ekseni başlığı
-                        }
+        Object.keys(baseUrls).forEach(function(industry) {
+            var categories = baseUrls[industry];
+
+            categories.forEach(function(category) {
+                var dataPoints = industryData[industry + '-' + category].map(item => item.total_content);
+                var labels = industryData[industry + '-' + category].map(item => item.date);
+
+                var chartDiv = document.createElement('div');
+                chartDiv.classList.add('chart');
+                var canvas = document.createElement('canvas');
+                canvas.id = industry + '-' + category + '-chart';
+                chartDiv.appendChild(canvas);
+                chartsContainer.appendChild(chartDiv);
+
+                var ctx = document.getElementById(canvas.id).getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: industry + ' - ' + category,
+                            data: dataPoints,
+                            borderColor: colors[index % colors.length],
+                            borderWidth: 2,
+                            fill: false
+                        }]
                     },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Tarih'  // X ekseni başlığı
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true },
+                            x: { title: { display: true, text: 'Tarih' } }
                         }
                     }
-                }
-            }
+                });
+                index++;
+            });
         });
     </script>
 </body>
 </html>
+{% endblock %}

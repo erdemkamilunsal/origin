@@ -5,6 +5,7 @@ from django.contrib import messages
 import json
 from datetime import datetime, timedelta
 from django.db.models import Sum
+import pytz
 
 
 
@@ -55,31 +56,44 @@ def mey_int_primary(request):
     return render(request, 'mey_int_primary.html', {'data': data})
 
 
-# views.py
-from django.shortcuts import render
-from datetime import datetime, timedelta
-from myapp.models import LatestDataTable
+from django.db.models import DateField, ExpressionWrapper
+
+from datetime import timedelta, datetime
+import pytz
 import json
 
+def index(request):
+    istanbul_tz = pytz.timezone('Europe/Istanbul')
+    today = datetime.now(istanbul_tz)
 
-def finance_twitter_chart(request):
-    today = datetime.now()
-    last_7_days = [(today - timedelta(days=i)).date() for i in range(7)]  # 7 günlük veri
+    base_urls = {
+        "finans": ["corporate", "selective", "primary"],
+        "mey": ["primary", "selective"],
+        "snacks-tr": ["corporate", "primary", "selective", "corprimary", "pladis_categories"],
+        "mey-international": ["primary"]
+    }
 
-    data = []
-    for day in last_7_days:
-        # Her gün için toplam içerik sayısını alıyoruz
-        total_content = LatestDataTable.objects.filter(
-            source_category='finans',
-            selective_part='corporate',
-            source='twitter',
-            created_time=day
-        ).aggregate(total_content=Sum('total'))['total_content'] or 0  # Veri yoksa 0
+    industry_data = {}
 
-        # Date objesini string'e çeviriyoruz
-        data.append({
-            'date': day.strftime('%Y-%m-%d'),  # Tarihi 'YYYY-MM-DD' formatına çeviriyoruz
-            'total_content': total_content
-        })
+    for industry, categories in base_urls.items():
+        for category in categories:
+            last_7_days_data = []
+            for i in range(7):
+                date_start = today - timedelta(days=i)
+                date_end = date_start + timedelta(days=1)  # Bitiş tarihini bir gün sonrasına alıyoruz
+                date_str = date_start.strftime("%Y-%m-%d")
 
-    return render(request, 'index.html', {'data': json.dumps(data)})
+                # `total` değerlerini alıyoruz ve toplamları değil, her bir kaydın `total` değerini alıyoruz
+                total_content = LatestDataTable.objects.filter(
+                    source_category=industry,
+                    selective_part=category,
+                    source="instagram_comment",
+                    created_time__gte=date_start.date(),  # Sadece tarih filtreleme
+                    created_time__lt=date_end.date()  # ve bitiş tarihi
+                ).aggregate(Sum('total'))['total__sum'] or 0  # Toplam içerik sayısını alıyoruz
+
+                last_7_days_data.append({"date": date_str, "total_content": total_content})
+
+            industry_data[f"{industry}-{category}"] = last_7_days_data[::-1]  # Ters çevirip sıralı hale getiriyoruz
+
+    return render(request, "index.html", {"industry_data": json.dumps(industry_data)})
