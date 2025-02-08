@@ -1,10 +1,14 @@
 from django.urls import path
 from . import views
-from .views import index
+from .views import index,tiktok_view
+from django.contrib.auth import views as auth_views
+
 
 
 urlpatterns = [
 
+    path('login/', views.login_view, name='login'),  # Giriş için URL
+    path('logout/', views.logout_view, name='logout'),  # Logout işlemi için URL
 
     # Finans Kategorisi
     path('finance/corporate/', views.finance_corporate, name='finance_corporate'),
@@ -24,6 +28,7 @@ urlpatterns = [
     path('mey_int/primary/', views.mey_int_primary, name='mey_int_primary'),  # Düzeltilmiş
 
     path('', index, name='index'),  # Ana sayfa olarak index view'ı
+    path('tiktok/', views.tiktok_view, name='tiktok_page'),
 
 ]
 

@@ -7,7 +7,37 @@ from datetime import datetime, timedelta
 from django.db.models import Sum
 import pytz
 
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib import messages
+from django.contrib.auth import logout
 
+
+def login_view(request):
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            # Kullanıcıyı doğrulama işlemi
+            username = form.cleaned_data.get("username")
+            password = form.cleaned_data.get("password")
+            user = authenticate(username=username, password=password)
+
+            if user is not None:
+                login(request, user)  # Kullanıcıyı giriş yaptı olarak işaretle
+                return redirect('index')  # Ana sayfaya yönlendir
+            else:
+                messages.error(request, "Geçersiz kullanıcı adı veya şifre")
+        else:
+            messages.error(request, "Geçersiz form")
+    else:
+        form = AuthenticationForm()
+
+    return render(request, "login.html", {"form": form})
+
+def logout_view(request):
+    logout(request)  # Kullanıcıyı oturumdan çıkar
+    return redirect('login')  # Login sayfasına yönlendir
 
 
 @login_required
@@ -62,6 +92,7 @@ from datetime import timedelta, datetime
 import pytz
 import json
 
+@login_required
 def index(request):
     istanbul_tz = pytz.timezone('Europe/Istanbul')
     today = datetime.now(istanbul_tz)
@@ -97,3 +128,46 @@ def index(request):
             industry_data[f"{industry}-{category}"] = last_7_days_data[::-1]  # Ters çevirip sıralı hale getiriyoruz
 
     return render(request, "index.html", {"industry_data": json.dumps(industry_data)})
+
+@login_required
+def tiktok_view(request):
+    # İstanbul saat dilimi
+    istanbul_tz = pytz.timezone('Europe/Istanbul')
+    # Sadece tarih kısmını alıyoruz (DateField ile uyumlu olması için)
+    today = datetime.now(istanbul_tz).date()
+
+    base_urls = {
+        "finans": ["corporate", "selective", "primary"],
+        "mey": ["primary", "selective"],
+        "snacks-tr": ["corporate", "primary", "selective", "corprimary", "pladis_categories"],
+        "mey-international": ["primary"]
+    }
+
+    tiktok_data = {}
+
+    # Her endüstri ve kategori için son 7 gün verisini çekiyoruz
+    for industry, categories in base_urls.items():
+        for category in categories:
+            last_7_days_data = []
+            for i in range(7):
+                # Her gün için tarih hesaplaması:
+                record_date = today - timedelta(days=i)
+                date_str = record_date.strftime("%Y-%m-%d")
+
+                # Veritabanından o gün, ilgili filtrelerle (sadece tarih karşılaştırması) kayıt çekiyoruz
+                daily_records = LatestDataTable.objects.filter(
+                    source_category=industry,
+                    selective_part=category,
+                    source="tiktok",
+                    created_time=record_date
+                ).values_list("total", flat=True)
+
+                last_7_days_data.append({
+                    "date": date_str,
+                    "total_content": list(daily_records)
+                })
+
+            # Gün sıralamasını kronolojik yapmak için ters çeviriyoruz
+            tiktok_data[f"{industry}-{category}"] = last_7_days_data[::-1]
+
+    return render(request, "tiktok.html", {"tiktok_data": json.dumps(tiktok_data)})

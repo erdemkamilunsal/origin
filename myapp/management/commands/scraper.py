@@ -144,17 +144,26 @@ class Command(BaseCommand):
                         print(f"{selective} kategorisinde yeni veri bulunamadı.")
 
                     # Son 7 gün verisi çekme kısmı
-                    print(f"{base_url} için son 7 günlük veriler çekiliyor...")
+                    istanbul_tz = pytz.timezone('Europe/Istanbul')
                     today = datetime.now(istanbul_tz)
-                    for i in range(7):  # Son 7 gün için döngü başlatıyoruz
-                        date_start = today - timedelta(days=i)
-                        date_end = today - timedelta(days=i - 1)
 
-                        since_str = date_start.strftime("%d.%m.%Y 00:00").replace(" ", "%20")
-                        until_str = date_end.strftime("%d.%m.%Y 00:00").replace(" ", "%20")
+                    for i in range(7):  # Son 7 gün için döngü
+                        # O günün başlangıcını temsil eden datetime nesnesi
+                        date_start_dt = today - timedelta(days=i)
+                        # DateField'a uygun olarak sadece tarih kısmını alıyoruz
+                        record_date = date_start_dt.date()
+                        # Bitiş zamanı: ertesi gün aynı saatte
+                        date_end_dt = date_start_dt + timedelta(days=1)
+
+                        # URL parametreleri için, günün başlangıcını 00:00 olarak ayarlıyoruz
+                        since_str = date_start_dt.strftime("%d.%m.%Y 00:00").replace(" ", "%20")
+                        until_str = date_end_dt.strftime("%d.%m.%Y 00:00").replace(" ", "%20")
 
                         for channel in channels_to_find:  # Her sosyal medya kanalı için
-                            extra_url = f"https://{base_url}.ebrandvalue.com/industries/{selective}/social/posts/?path_param=posts&source={channel}&since={since_str}&until={until_str}"
+                            extra_url = (
+                                f"https://{base_url}.ebrandvalue.com/industries/{selective}/social/posts/"
+                                f"?path_param=posts&source={channel}&since={since_str}&until={until_str}"
+                            )
                             print(f"{extra_url} verisi çekiliyor...")
 
                             response = session.get(extra_url)
@@ -168,24 +177,23 @@ class Command(BaseCommand):
                             author_count = paging_data.get("authors", 0)
                             content_count = paging_data.get("total", 0)
 
-                            # Veritabanını güncelleme
+                            # Aynı gün, kanal, endüstri vs. kayıt varsa siliniyor
                             LatestDataTable.objects.filter(
                                 source_category=base_url,
                                 selective_part=selective,
                                 source=channel,
-                                created_time=date_start
+                                created_time=record_date  # DateField için sadece tarih
                             ).delete()
 
+                            # Yeni kayıt oluşturuluyor
                             LatestDataTable.objects.create(
                                 source_category=base_url,
                                 selective_part=selective,
                                 source=channel,
-                                created_time=date_start,
+                                created_time=record_date,  # DateField: datetime yerine date kullanıyoruz
                                 author=author_count,
                                 total=content_count
                             )
-                            print(f"✅ {since_str} - {base_url} - {selective} - {channel} için yazar: {author_count}, içerik: {content_count} kaydedildi.")
-
-        self.stdout.write(self.style.SUCCESS("Tüm veriler başarıyla kaydedildi!"))
-
+                            print(
+                                f"✅ {since_str} - {base_url} - {selective} - {channel} için yazar: {author_count}, içerik: {content_count} kaydedildi.")
 update_scraper_log()

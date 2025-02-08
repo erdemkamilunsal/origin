@@ -53,8 +53,8 @@ MIDDLEWARE = [
 ]
 
 
-LOGIN_URL = '/login/'  # Giriş yapılmamışsa kullanıcıyı yönlendirecek URL
-LOGOUT_REDIRECT_URL = '/login/'  # Çıkıştan sonra yönlendirme yapılacak URL
+LOGIN_URL = 'login'  # Giriş yapılmamışsa kullanıcıyı yönlendirecek URL
+LOGOUT_REDIRECT_URL = 'login'  # Çıkıştan sonra yönlendirme yapılacak URL
 LOGIN_REDIRECT_URL = '/'  # Girişten sonra yönlendirme yapılacak URL
 
 
