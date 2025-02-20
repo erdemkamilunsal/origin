@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ channel_name }} Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .chart {
+            width: 48%;  /* Yana yana 2 grafik sığacak şekilde */
+            margin-bottom: 20px;
+        }
+        canvas {
+            width: 100%;
+            height: 300px;  /* Yüksekliği 300px yapıyoruz */
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <h1>{{ channel_name }} Dashboard</h1>
+
+    {% if social_media_data %}
+        <div id="chart-container" class="chart-container">
+            {% for key, value in social_media_data.items %}
+                <div class="chart">
+                    <h3>{{ key }}</h3>
+                    <canvas id="chart-{{ key }}" width="400" height="200"></canvas>
+                    <script>
+                        // JSON verisini JavaScript'e aktarıyoruz
+                        var data = {{ value|safe }};  // Python tarafında direkt veriyi almak
+                        var dates = data.map(item => item.date);
+                        var totals = data.map(item => item.total_content.reduce((a, b) => a + b, 0));  // Verilerin toplamını alıyoruz
+
+                        // Grafik oluşturma
+                        var ctx = document.getElementById('chart-{{ key }}').getContext('2d');
+                        var chart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: dates,
+                                datasets: [{
+                                    label: '{{ key }} Verisi',
+                                    data: totals,
+                                    borderColor: 'rgb(75, 192, 192)',
+                                    tension: 0.1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    x: {
+                                        type: 'category',
+                                        labels: dates
+                                    },
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    </script>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No data available for this channel.</p>
+    {% endif %}
+</body>
+</html>

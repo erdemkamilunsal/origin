@@ -96,7 +96,6 @@
 </head>
 <body>
     <div class="container mt-4">
-        <!-- Menü -->
         <nav class="navbar navbar-expand-lg navbar-custom">
             <a class="navbar-brand" href="{% url 'index' %}">Dashboards</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -104,165 +103,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="socialMediaDropdown" role="button" data-bs-toggle="dropdown">
-                            Sosyal Medya
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/twitter.png' %}" alt="Twitter" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    Twitter
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/facebook.png' %}" alt="Facebook" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    Facebook Posts
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/facebook.png' %}" alt="Facebook" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    Facebook Comments
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/facebook.png' %}" alt="Facebook" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    Facebook Likes
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/youtube.png' %}" alt="Youtube" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    Youtube Posts
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/youtube.png' %}" alt="Youtube" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    Youtube Shorts
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/instagram.png' %}" alt="Instagram" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    Instagram Posts
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/instagram.png' %}" alt="Instagram" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    Instagram Comments
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{% url 'tiktok_page' %}">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/tiktok.png' %}" alt="Tiktok" style="width: 10px; height: 10px; margin-right: 8px;">
-                                        TikTok
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/pinterest.png' %}" alt="Pinterest" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    Pinterest
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/rss.png' %}" alt="Rss" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    RSS
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/apple_app_store_comment.png' %}" alt="AppleAppStore" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    Apple App Store
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/Google_Play_Store_Comment.png' %}" alt="GooglePlayStore" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    Google Play Store
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/linkedin.png' %}" alt="Linkedin" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    Linkedin
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/donanimhaber.png' %}" alt="Donanımhaber" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    DonanımHaber
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/eksi_sozluk.png' %}" alt="Eksisözlük" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    Ekşisözlük
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/inci_sozluk.png' %}" alt="İncisozluk" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    İncisözlük
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/sikayetvar.png' %}" alt="Şikayetvar" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    Şikayetvar
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex align-items-center">
-                                    <img src="{% static 'images/uludag_sozluk.png' %}" alt="Uludagsozluk" style="width: 10px; height: 10px; margin-right: 8px;">
-                                    Uludağsözlük
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                    <!-- Sosyal Medya Menüsü -->
                     <!-- Finans Menüsü -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="financeDropdown" role="button" data-bs-toggle="dropdown">
@@ -307,10 +148,24 @@
                             <li><a class="dropdown-item" href="{% url 'mey_int_primary' %}">Primary</a></li>
                         </ul>
                     </li>
+
+                    <!-- Sosyal Medya Kanalları Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="socialMediaDropdown" role="button" data-bs-toggle="dropdown">
+                            Sosyal Medya Kanalları
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% for channel in channels_to_find %}
+                                <li><a class="dropdown-item" href="{% url 'channel_dashboard' channel_name=channel %}">{{ channel }}</a></li>
+                            {% empty %}
+                                <li><a class="dropdown-item" href="#">Kanallar bulunamadı.</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
                 </ul>
 
                 <!-- Sağ kısma kullanıcı adı ve logout ekleyelim -->
-                            <ul class="navbar-nav ms-auto d-flex align-items-center"> <!-- d-flex ve align-items-center ile hizalama -->
+                <ul class="navbar-nav ms-auto d-flex align-items-center"> <!-- d-flex ve align-items-center ile hizalama -->
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <span class="navbar-text">{{ user.username|capfirst }}</span> <!-- Kullanıcı adı ilk harf büyük -->
@@ -327,14 +182,10 @@
             </div>
         </nav>
         <hr class="my-4" style="solid #495057; border-radius: 1px;">
-                <!-- Kayan Yazı Bilgilendirme Kısmı -->
-
-        <!-- Sayfa İçeriği -->
         <div class="mt-4">
             {% block content %}
             {% endblock %}
         </div>
-
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

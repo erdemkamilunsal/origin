@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sosyal Medya Kanalları</title>
+</head>
+<body>
+    <h1>Sosyal Medya Kanalları</h1>
+
+    {% if channels_to_find %}
+        <form method="get">
+            <label for="channel">Bir Kanal Seçin:</label>
+            <select name="channel_name" id="channel">
+                {% for channel in channels_to_find %}
+                    <option value="{{ channel }}">{{ channel }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Göster</button>
+        </form>
+    {% else %}
+        <p>Kanallar bulunamadı.</p>
+    {% endif %}
+</body>
+</html>

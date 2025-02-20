@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import index,tiktok_view
+from .views import index
 from django.contrib.auth import views as auth_views
 
 
@@ -28,7 +28,8 @@ urlpatterns = [
     path('mey_int/primary/', views.mey_int_primary, name='mey_int_primary'),  # Düzeltilmiş
 
     path('', index, name='index'),  # Ana sayfa olarak index view'ı
-    path('tiktok/', views.tiktok_view, name='tiktok_page'),
+    path('dashboard/<str:channel_name>/', views.channel_dashboard, name='channel_dashboard'),
+    path('select_channel/', views.select_channel, name='select_channel'),
 
 ]
 

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Posts - 7 Günlük Veriler</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .chart {
+            width: 50%;
+            margin-bottom: 20px;
+        }
+        canvas {
+            max-width: 100%;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Facebook Posts - 7 Günlük Veriler</h1>
+
+    <div class="chart-container" id="charts-container">
+        <!-- Grafikler buraya eklenecek -->
+    </div>
+
+    <script>
+        // views.py'dan gönderilen JSON veriyi parse ediyoruz.
+        var facebookpost_data = JSON.parse('{{ facebookpost_data|escapejs }}');
+        var chartsContainer = document.getElementById('charts-container');
+        var colors = ['#FF5733', '#33FF57', '#3357FF', '#F3FF33', '#FF33F6', '#33F6FF'];
+        var index = 0;
+
+        // Her bir endüstri-kategori için grafik oluşturuyoruz.
+        Object.keys(facebookpost_data).forEach(function(key) {
+            // Her gün için total_content listesindeki rakamları toplayarak tek bir veri noktası elde ediyoruz.
+            var dataPoints = facebookpost_data[key].map(item =>
+                item.total_content.reduce((a, b) => a + b, 0)
+            );
+            var labels = facebookpost_data[key].map(item => item.date);
+
+            // Grafik için bir div ve canvas elementi oluşturuyoruz.
+            var chartDiv = document.createElement('div');
+            chartDiv.classList.add('chart');
+            var canvas = document.createElement('canvas');
+            canvas.id = key + '-chart';
+            chartDiv.appendChild(canvas);
+            chartsContainer.appendChild(chartDiv);
+
+            var ctx = document.getElementById(canvas.id).getContext('2d');
+            new Chart(ctx, {
+                type: 'line', // Çizgi grafik tipi
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: key.replace('-', ' - '),
+                        data: dataPoints,
+                        borderColor: colors[index % colors.length],
+                        borderWidth: 2,
+                        fill: false, // Grafik alanını doldurma
+                        pointRadius: 4, // Nokta yarıçapı
+                        pointBackgroundColor: colors[index % colors.length]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'İçerik Sayısı'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: ''
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return 'İçerik: ' + tooltipItem.raw;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            index++;
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

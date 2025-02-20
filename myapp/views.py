@@ -1,17 +1,18 @@
 from django.shortcuts import render, redirect
-from .models import ChannelData, LatestDataTable
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-import json
-from datetime import datetime, timedelta
-from django.db.models import Sum
-import pytz
-
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib import messages
-from django.contrib.auth import logout
+import json
+import pytz
+from django.db.models import DateField, ExpressionWrapper
+from datetime import timedelta, datetime
+from .models import ChannelData, LatestDataTable
+from django.db.models import Sum
+import matplotlib.pyplot as plt
+import io
+import base64
+from django.utils import timezone
 
 
 def login_view(request):
@@ -86,11 +87,7 @@ def mey_int_primary(request):
     return render(request, 'mey_int_primary.html', {'data': data})
 
 
-from django.db.models import DateField, ExpressionWrapper
 
-from datetime import timedelta, datetime
-import pytz
-import json
 
 @login_required
 def index(request):
@@ -129,13 +126,30 @@ def index(request):
 
     return render(request, "index.html", {"industry_data": json.dumps(industry_data)})
 
-@login_required
-def tiktok_view(request):
+
+def select_channel(request):
+    channels_to_find = {
+        "twitter", "facebook", "facebook_page_comment", "facebook_page_like",
+        "youtube", "youtube_shorts", "instagram", "instagram_comment",
+        "tiktok", "pinterest", "rss", "apple_app_store_comment",
+        "google_play_store_comment", "linkedin", "donanimhaber", "eksi_sozluk",
+        "inci_sozluk", "sikayetvar", "uludag_sozluk"
+    }
+
+    # Eğer bir kanal seçildiyse, channel_dashboard'a yönlendirme yap
+    if request.GET.get('channel_name'):
+        channel_name = request.GET['channel_name']
+        return redirect('channel_dashboard', channel_name=channel_name)
+
+    return render(request, 'select_channel.html', {'channels_to_find': channels_to_find})
+
+
+def channel_dashboard(request, channel_name):
     # İstanbul saat dilimi
     istanbul_tz = pytz.timezone('Europe/Istanbul')
-    # Sadece tarih kısmını alıyoruz (DateField ile uyumlu olması için)
-    today = datetime.now(istanbul_tz).date()
+    today = timezone.now().date()
 
+    # Base_urls her endüstri ve kategori için tanımlandı
     base_urls = {
         "finans": ["corporate", "selective", "primary"],
         "mey": ["primary", "selective"],
@@ -143,22 +157,22 @@ def tiktok_view(request):
         "mey-international": ["primary"]
     }
 
-    tiktok_data = {}
+    social_media_data = {}
 
-    # Her endüstri ve kategori için son 7 gün verisini çekiyoruz
+    # Seçilen kanal için her endüstri ve kategori için son 7 gün verisini çekiyoruz
     for industry, categories in base_urls.items():
         for category in categories:
             last_7_days_data = []
             for i in range(7):
-                # Her gün için tarih hesaplaması:
+                # Her gün için tarih hesaplaması
                 record_date = today - timedelta(days=i)
                 date_str = record_date.strftime("%Y-%m-%d")
 
-                # Veritabanından o gün, ilgili filtrelerle (sadece tarih karşılaştırması) kayıt çekiyoruz
+                # Veritabanından o gün için verileri çekiyoruz
                 daily_records = LatestDataTable.objects.filter(
                     source_category=industry,
                     selective_part=category,
-                    source="tiktok",
+                    source=channel_name,
                     created_time=record_date
                 ).values_list("total", flat=True)
 
@@ -167,7 +181,23 @@ def tiktok_view(request):
                     "total_content": list(daily_records)
                 })
 
-            # Gün sıralamasını kronolojik yapmak için ters çeviriyoruz
-            tiktok_data[f"{industry}-{category}"] = last_7_days_data[::-1]
+            # İlgili endüstri ve kategori için verileri dictionary'ye ekliyoruz
+            social_media_data[f"{industry}-{category}"] = last_7_days_data[::-1]
 
-    return render(request, "tiktok.html", {"tiktok_data": json.dumps(tiktok_data)})
+    # Verileri şablona gönderiyoruz
+    return render(request, "channel_dashboard.html", {
+        "social_media_data": social_media_data,  # JSON verisini şablona gönderiyoruz, artık direk JSON değil
+        "channel_name": channel_name
+    })
+
+def base_context(request):
+    channels_to_find = [
+        "twitter", "facebook", "facebook_page_comment", "facebook_page_like",
+        "youtube", "youtube_shorts", "instagram", "instagram_comment",
+        "tiktok", "pinterest", "rss", "apple_app_store_comment",
+        "google_play_store_comment", "linkedin", "donanimhaber", "eksi_sozluk",
+        "inci_sozluk", "sikayetvar", "uludag_sozluk"
+    ]
+    return {
+        'channels_to_find': channels_to_find
+    }
