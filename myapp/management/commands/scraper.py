@@ -99,21 +99,21 @@ class Command(BaseCommand):
                         all_data = parsed_data.get('data', [])
 
                         if all_data:
-                            for entry in all_data:
-                                body = entry['content'].get('body', None)
-                                body = unidecode(body) if body else None
+                            entry = all_data[0]
+                            body = entry['content'].get('body', None)
+                            body = unidecode(body) if body else None
 
-                                result.append({
-                                    "source_category": base_url,
-                                    "author_name": entry['author'].get('name', None),
-                                    "author_nick": entry['author'].get('nick', None),
-                                    "author_follower_count": entry['author'].get('follower_count', None),
-                                    "body": body,
-                                    "source": entry.get('source', None),
-                                    "link": entry['content'].get('link', None),
-                                    "created_time": entry['content'].get('create_time', None),
-                                    "selective_part": selective
-                                })
+                            result.append({
+                                "source_category": base_url,
+                                "author_name": entry['author'].get('name', None),
+                                "author_nick": entry['author'].get('nick', None),
+                                "author_follower_count": entry['author'].get('follower_count', None),
+                                "body": body,
+                                "source": entry.get('source', None),
+                                "link": entry['content'].get('link', None),
+                                "created_time": entry['content'].get('create_time', None),
+                                "selective_part": selective
+                            })
                         else:
                             print(f"{channel} kanalı için {base_url} - {selective} kategorisinde veri bulunamadı.")
 

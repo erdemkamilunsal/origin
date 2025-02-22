@@ -1,7 +1,11 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ channel_name }} Dashboard</title>
@@ -20,26 +24,32 @@
             width: 100%;
             height: 300px;  /* Yüksekliği 300px yapıyoruz */
         }
+        .chart h3 {
+            text-align: center;
+            width: 100%;
+            margin-bottom: 10px;
+}
+
     </style>
 </head>
-
 <body>
-
-
-
-    <h1>{{ channel_name }} Dashboard</h1>
 
     {% if social_media_data %}
         <div id="chart-container" class="chart-container">
             {% for key, value in social_media_data.items %}
                 <div class="chart">
-                    <h3>{{ key }}</h3>
+
                     <canvas id="chart-{{ key }}" width="400" height="200"></canvas>
                     <script>
                         // JSON verisini JavaScript'e aktarıyoruz
                         var data = {{ value|safe }};  // Python tarafında direkt veriyi almak
                         var dates = data.map(item => item.date);
                         var totals = data.map(item => item.total_content.reduce((a, b) => a + b, 0));  // Verilerin toplamını alıyoruz
+
+                        // Key değerini düzenleme: '-' yerine boşluk koy, ilk harfleri büyük yap
+                        var formattedKey = '{{ key }}'
+                            .replace(/-/g, ' ') // '-' karakterlerini boşluk ile değiştir
+                            .replace(/\b\w/g, char => char.toUpperCase()); // Her kelimenin ilk harfini büyük yap
 
                         // Grafik oluşturma
                         var ctx = document.getElementById('chart-{{ key }}').getContext('2d');
@@ -48,7 +58,7 @@
                             data: {
                                 labels: dates,
                                 datasets: [{
-                                    label: '{{ key }} Verisi',
+                                    label: formattedKey + ' Son 7 Gün', // Güncellenmiş key burada kullanılıyor
                                     data: totals,
                                     borderColor: 'rgb(75, 192, 192)',
                                     tension: 0.1
@@ -75,3 +85,4 @@
     {% endif %}
 </body>
 </html>
+{% endblock %}
