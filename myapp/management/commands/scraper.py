@@ -25,6 +25,7 @@ class Command(BaseCommand):
     help = "Sosyal medya verilerini çekip kaydeder"
 
     def handle(self, *args, **kwargs):
+        start_time = time.time()  # Scraper başlangıç zamanı
 
         base_urls = {
             "finans": ["corporate", "selective", "primary"],
@@ -146,6 +147,13 @@ class Command(BaseCommand):
                     # Son 7 gün verisi çekme kısmı
                     istanbul_tz = pytz.timezone('Europe/Istanbul')
                     today = datetime.now(istanbul_tz)
+                    seven_days_ago = today - timedelta(days=7)
+                    # Son 7 gün öncesindeki tüm verileri sil
+                    deleted_count, _ = LatestDataTable.objects.filter(
+                        created_time__lt=seven_days_ago.date()
+                    ).delete()
+
+                    print(f"🗑 {deleted_count} adet eski kayıt (7 günden eski) temizlendi.")
 
                     for i in range(7):  # Son 7 gün için döngü
                         # O günün başlangıcını temsil eden datetime nesnesi
@@ -177,23 +185,35 @@ class Command(BaseCommand):
                             author_count = paging_data.get("authors", 0)
                             content_count = paging_data.get("total", 0)
 
-                            # Aynı gün, kanal, endüstri vs. kayıt varsa siliniyor
-                            LatestDataTable.objects.filter(
+                            deleted_count, _ = LatestDataTable.objects.filter(
                                 source_category=base_url,
                                 selective_part=selective,
                                 source=channel,
-                                created_time=record_date  # DateField için sadece tarih
+                                created_time=record_date
                             ).delete()
 
-                            # Yeni kayıt oluşturuluyor
+                            print(
+                                f"🗑 {base_url} - {selective} - {channel} için {record_date} tarihli {deleted_count} eski kayıt silindi.")
+
+                            # Yeni veriyi ekle
                             LatestDataTable.objects.create(
                                 source_category=base_url,
                                 selective_part=selective,
                                 source=channel,
-                                created_time=record_date,  # DateField: datetime yerine date kullanıyoruz
+                                created_time=record_date,
                                 author=author_count,
                                 total=content_count
                             )
-                            print(
-                                f"✅ {since_str} - {base_url} - {selective} - {channel} için yazar: {author_count}, içerik: {content_count} kaydedildi.")
-update_scraper_log()
+
+                            print(f"✅ {base_url} - {selective} - {channel} için yeni veri eklendi.")
+
+        end_time = time.time()  # Scraper bitiş zamanı
+        elapsed_time = end_time - start_time
+        print(f"Scraper tamamlandı! Toplam süre: {elapsed_time:.2f} saniye.")
+
+
+
+
+
+
+

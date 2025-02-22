@@ -40,7 +40,6 @@ def logout_view(request):
     logout(request)  # Kullanıcıyı oturumdan çıkar
     return redirect('login')  # Login sayfasına yönlendir
 
-
 @login_required
 def finance_primary(request):
     data = ChannelData.objects.filter(source_category="finans", selective_part="primary")
@@ -86,9 +85,6 @@ def mey_int_primary(request):
     data = ChannelData.objects.filter(source_category="mey-international", selective_part="primary")
     return render(request, 'mey_int_primary.html', {'data': data})
 
-
-
-
 @login_required
 def index(request):
     istanbul_tz = pytz.timezone('Europe/Istanbul')
@@ -126,7 +122,6 @@ def index(request):
 
     return render(request, "index.html", {"industry_data": json.dumps(industry_data)})
 
-
 def select_channel(request):
     channels_to_find = {
         "twitter", "facebook", "facebook_page_comment", "facebook_page_like",
@@ -142,7 +137,6 @@ def select_channel(request):
         return redirect('channel_dashboard', channel_name=channel_name)
 
     return render(request, 'select_channel.html', {'channels_to_find': channels_to_find})
-
 
 def channel_dashboard(request, channel_name):
     # İstanbul saat dilimi

@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class ChannelData(models.Model):
     source_category = models.CharField(max_length=255, null=True, blank=True)
     author_name = models.CharField(max_length=255, null=True, blank=True)
@@ -16,7 +15,7 @@ class ChannelData(models.Model):
         return f"Data for {self.source_category} - {self.selective_part}"
 
 class ScraperLog(models.Model):
-    last_update = models.DateTimeField(auto_now=True)  # Otomatik olarak güncellenir
+    last_update = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Last update: {self.last_update}"
@@ -26,7 +25,7 @@ class LatestDataTable(models.Model):
     selective_part = models.CharField(max_length=255)
     source = models.CharField(max_length=255)
     created_time = models.DateField()
-    author = models.CharField(max_length=255, default='Unknown')  # Varsayılan değer ekleniyor
+    author = models.CharField(max_length=255, default='Unknown')
     total = models.IntegerField(default=0)
 
     def __str__(self):
