@@ -6,83 +6,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>7 Günlük Veriler</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Tweet Görünümü</title>
     <style>
-        .chart-container {
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f8fa;
             display: flex;
-            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+            flex-wrap: wrap;  /* Tweetlerin yanyana olmasını sağlıyoruz */
+        }
+
+        .tweet-wrapper {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);  /* 2 sütunlu grid düzeni */
+            gap: 20px; /* Sütunlar arasındaki boşluk */
+            width: 100%;
+            max-width: 1300px; /* Sayfa genişliğini sınırlıyoruz */
+        }
+
+        .tweet-container {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e1e8ed;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .tweet-header {
+            display: flex;
+            align-items: center;
+        }
+        .tweet-header img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .tweet-header .user-info {
+            flex-grow: 1;
+        }
+        .tweet-header .name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #14171a;
+        }
+        .tweet-header .nick {
+            color: #657786;
+            font-size: 14px;
+        }
+        .tweet-header .follow-info {
+            font-size: 12px;
+            color: #657786;
+            margin-top: 5px;
+        }
+        .tweet-content {
+            margin-top: 10px;
+            font-size: 15px;
+            color: #14171a;
+            line-height: 1.5;
+        }
+        .tweet-link {
+            color: #1da1f2;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .tweet-link:hover {
+            text-decoration: underline;
+        }
+        .tweet-meta {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #657786;
+        }
+        .tweet-stats {
+            display: flex;
             justify-content: space-between;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #657786;
         }
-        .chart {
-            width: 50%;  /* Her grafik için üçte bir genişlik */
-            margin-bottom: 20px;
+        .tweet-stats span {
+            margin-right: 15px;
         }
-        canvas {
-            max-width: 100%;
-            height: 300px;
+        .tweet-source {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #657786;
+        }
+        .tweet-reply {
+            margin-top: 10px;
+            padding: 10px;
+            border-left: 2px solid #1da1f2;
+            background-color: #f0f8ff;
+            font-size: 14px;
+            color: #14171a;
+        }
+        .tweet-brands {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #657786;
         }
     </style>
 </head>
 <body>
-    <h1>Instagram Comment - 7 Günlük Veriler</h1>
 
-    <div class="chart-container" id="charts-container">
-        <!-- Grafikler buraya eklenecek -->
+    <!-- Tweetleri iki sütun olarak göster -->
+    <div class="tweet-wrapper">
+        {% for post in posts %}
+        <div class="tweet-container">
+            <!-- Tweet Başlık -->
+            <div class="tweet-header">
+                <img src="{{ post.avatar }}" alt="Profil Fotoğrafı">
+                <div class="user-info">
+                    <div class="name">{{ post.name }}</div>
+                    <div class="nick">@{{ post.nick }}</div>
+                    <div class="follow-info">Takipçi: {{ post.follower_count }} | Takip Edilen: {{ post.following_count }}</div>
+                </div>
+            </div>
+
+            <!-- Tweet İçeriği -->
+            <div class="tweet-content">
+                {{ post.content|truncatechars:200 }}
+            </div>
+
+            <!-- Link Varsa -->
+            {% if post.link %}
+            <div>
+                <a href="{{ post.link }}" class="tweet-link">Tweet bağlantısını gör</a>
+            </div>
+            {% endif %}
+
+            <!-- Zaman Bilgisi -->
+            <div class="tweet-meta">{{ post.created_time }} - {{ post.create_time|date:"H:i" }}</div>
+
+            <!-- Tweet İstatistikleri -->
+            <div class="tweet-stats">
+                <span>💬 {{ post.comment_count }}</span>
+                <span>🔁 {{ post.retweet_count }}</span>
+                <span>❤️ {{ post.favourite_count }}</span>
+                <span>👀 {{ post.view_count }}</span>
+                <span>📌 {{ post.quote_count }}</span>
+            </div>
+
+            <!-- Kaynak Bilgisi -->
+            <div class="tweet-source">
+                Kaynak: {{ post.source }}
+            </div>
+
+            <!-- Markalar -->
+            <div class="tweet-brands">
+                İlgili Markalar: {{ post.brands }}
+            </div>
+        </div>
+        {% endfor %}
     </div>
 
-    <script>
-        var industryData = JSON.parse('{{ industry_data|escapejs }}');
-        var chartsContainer = document.getElementById('charts-container');
-        var colors = ['#FF5733', '#33FF57', '#3357FF', '#F3FF33', '#FF33F6', '#33F6FF'];
-        var index = 0;
-
-        var baseUrls = {
-            "finans": ["corporate", "selective", "primary"],
-            "mey": ["primary", "selective"],
-            "snacks-tr": ["corporate", "primary", "selective", "corprimary", "pladis_categories"],
-            "mey-international": ["primary"]
-        };
-
-        Object.keys(baseUrls).forEach(function(industry) {
-            var categories = baseUrls[industry];
-
-            categories.forEach(function(category) {
-                var dataPoints = industryData[industry + '-' + category].map(item => item.total_content);
-                var labels = industryData[industry + '-' + category].map(item => item.date);
-
-                var chartDiv = document.createElement('div');
-                chartDiv.classList.add('chart');
-                var canvas = document.createElement('canvas');
-                canvas.id = industry + '-' + category + '-chart';
-                chartDiv.appendChild(canvas);
-                chartsContainer.appendChild(chartDiv);
-
-                var ctx = document.getElementById(canvas.id).getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: industry + ' - ' + category,
-                            data: dataPoints,
-                            borderColor: colors[index % colors.length],
-                            borderWidth: 2,
-                            fill: false
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: { beginAtZero: true },
-                            x: { title: { display: true, text: 'Tarih' } }
-                        }
-                    }
-                });
-                index++;
-            });
-        });
-    </script>
 </body>
 </html>
+
 {% endblock %}

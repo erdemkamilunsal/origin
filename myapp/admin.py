@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ChannelData, LatestDataTable
+from .models import ChannelData, LatestDataTable, SocialMediaPost
 
 
 class ChannelDataAdmin(admin.ModelAdmin):
@@ -22,7 +22,15 @@ class LatestDataTableAdmin(admin.ModelAdmin):
     # Varsayılan sıralama
     ordering = ('-created_time',)
 
+# SocialMediaPost modelini admin paneline dahil et
+class SocialMediaPostAdmin(admin.ModelAdmin):
+    list_display = ('name', 'follower_count', 'created_time', 'link', 'source', 'selective_part')  # Göstermek istediğiniz alanlar
+    search_fields = ('name', 'link')  # Arama yapabileceğiniz alanlar
+    list_filter = ('source', 'selective_part')  # Filtreleme seçenekleri
+    list_per_page = 10  # Sayfa başına gösterilecek öğe sayısı
 
 # Admin paneline model ekleme
 admin.site.register(ChannelData, ChannelDataAdmin)
 admin.site.register(LatestDataTable, LatestDataTableAdmin)
+admin.site.register(SocialMediaPost, SocialMediaPostAdmin)
+

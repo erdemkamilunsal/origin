@@ -9,7 +9,7 @@ from datetime import timedelta
 import urllib.parse
 import pytz
 import django
-from myapp.models import ChannelData, LatestDataTable
+from myapp.models import ChannelData, LatestDataTable, SocialMediaPost
 from django.core.management.base import BaseCommand
 from datetime import datetime
 from myapp.models import ScraperLog
@@ -35,7 +35,7 @@ class Command(BaseCommand):
         }
 
         channels_to_find = {
-            "twitter", "facebook", "facebook_page_comment", "facebook_page_like",
+            "twitter","facebook", "facebook_page_comment", "facebook_page_like",
             "youtube", "youtube_shorts", "instagram", "instagram_comment",
             "tiktok", "pinterest", "rss", "apple_app_store_comment",
             "google_play_store_comment", "linkedin", "donanimhaber", "eksi_sozluk",
@@ -206,6 +206,74 @@ class Command(BaseCommand):
                             )
 
                             print(f"✅ {base_url} - {selective} - {channel} için yeni veri eklendi.")
+                    istanbul_tz = pytz.timezone('Europe/Istanbul')
+                    today = datetime.now(istanbul_tz)
+                    kanallar = {
+                        "twitter", "facebook", "youtube", "instagram"
+                    }
+                    for channel in kanallar:
+                        # Başlangıç tarihi (bir önceki gün, saat 00:00)
+                        start_date = today - timedelta(days=1)
+                        start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+                        # Bitiş tarihi (bugün, saat 00:00)
+                        end_date = today.replace(hour=0, minute=0, second=0, microsecond=0)
+
+                        # Tarihleri string formatına dönüştürme
+                        since_str = start_date.strftime("%d.%m.%Y 00:00").replace(" ", "%20")
+                        until_str = end_date.strftime("%d.%m.%Y 00:00").replace(" ", "%20")
+
+                        # URL oluşturma
+                        extra_url = f"https://{base_url}.ebrandvalue.com/industries/{selective}/social/posts/?path_param=posts&source={channel}&most_shared=true&since={since_str}&until={until_str}"
+
+                        # URL'yi yazdır
+                        print(f"{extra_url} verisi çekiliyor...")
+
+                        response = session.get(extra_url)
+                        if response.status_code != 200:
+                            print(f"{since_str} - {base_url} için {channel} verisi bulunamadı veya geçersiz.")
+                            continue
+
+                        parsed_data = json.loads(response.text)
+                        data = parsed_data.get("data", [])
+
+                        # İlk 10 elemanı al
+                        data = data[:10]
+
+                        for entry in data:
+                            post_data = {
+                                "avatar": entry['author'].get('avatar', None),
+                                "follower_count": entry['author'].get('follower_count', None),
+                                "following_count": entry['author'].get('following_count', None),
+                                "name": entry['author'].get('name', None),
+                                "nick": entry['author'].get('nick', None),
+                                "brands": entry.get('brands', None),
+                                "content": unidecode(entry['content'].get('body', '')) if entry['content'].get('body') else None,
+                                "comment_count": entry['content'].get('comment_count', None),
+                                "favourite_count": entry['content'].get('favourite_count', None),
+                                "create_time": entry['content'].get('create_time', None),
+                                "link": entry['content'].get('link', None),
+                                "quote_count": entry['content'].get('quote_count', None),
+                                "reply_content": entry['content'].get('reply_content', None),
+                                "retweet_count": entry['content'].get('retweet_count', None),
+                                "view_count": entry['content'].get('view_count', None),
+                                "source": entry.get('source', None),
+                                "selective_part": selective,
+                                "created_time": start_date.date()
+                            }
+
+                            existing_data = SocialMediaPost.objects.filter(
+                                avatar=post_data['avatar'],
+                                name=post_data['name'],
+                                link=post_data['link'],
+                                create_time=post_data['create_time']
+                            )
+
+                            if not existing_data.exists():
+                                SocialMediaPost.objects.create(**post_data)
+                                print(f"✅ Yeni veri eklendi: {post_data['name']} - {post_data['create_time']}")
+                            else:
+                                print(f"⚠️ {post_data['name']} - {post_data['create_time']} zaten var.")
 
         end_time = time.time()  # Scraper bitiş zamanı
         elapsed_time = end_time - start_time

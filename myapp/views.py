@@ -7,7 +7,7 @@ import json
 import pytz
 from django.db.models import DateField, ExpressionWrapper
 from datetime import timedelta, datetime
-from .models import ChannelData, LatestDataTable
+from .models import ChannelData, LatestDataTable, SocialMediaPost
 from django.db.models import Sum
 import matplotlib.pyplot as plt
 import io
@@ -120,7 +120,13 @@ def index(request):
 
             industry_data[f"{industry}-{category}"] = last_7_days_data[::-1]  # Ters çevirip sıralı hale getiriyoruz
 
-    return render(request, "index.html", {"industry_data": json.dumps(industry_data)})
+    # SocialMediaPost modelinden tüm paylaşımları alıyoruz
+    posts = SocialMediaPost.objects.all()
+
+    return render(request, "index.html", {
+        "industry_data": json.dumps(industry_data),
+        "posts": posts  # Bu satır ile SocialMediaPost verilerini şablona geçiyoruz
+    })
 
 def select_channel(request):
     channels_to_find = {
