@@ -96,36 +96,11 @@ def index(request):
         "snacks-tr": ["corporate", "primary", "selective", "corprimary", "pladis_categories"],
         "mey-international": ["primary"]
     }
-
-    industry_data = {}
-
-    for industry, categories in base_urls.items():
-        for category in categories:
-            last_7_days_data = []
-            for i in range(7):
-                date_start = today - timedelta(days=i)
-                date_end = date_start + timedelta(days=1)  # Bitiş tarihini bir gün sonrasına alıyoruz
-                date_str = date_start.strftime("%Y-%m-%d")
-
-                # `total` değerlerini alıyoruz ve toplamları değil, her bir kaydın `total` değerini alıyoruz
-                total_content = LatestDataTable.objects.filter(
-                    source_category=industry,
-                    selective_part=category,
-                    source="instagram_comment",
-                    created_time__gte=date_start.date(),  # Sadece tarih filtreleme
-                    created_time__lt=date_end.date()  # ve bitiş tarihi
-                ).aggregate(Sum('total'))['total__sum'] or 0  # Toplam içerik sayısını alıyoruz
-
-                last_7_days_data.append({"date": date_str, "total_content": total_content})
-
-            industry_data[f"{industry}-{category}"] = last_7_days_data[::-1]  # Ters çevirip sıralı hale getiriyoruz
-
     # SocialMediaPost modelinden tüm paylaşımları alıyoruz
     posts = SocialMediaPost.objects.all()
 
     return render(request, "index.html", {
-        "industry_data": json.dumps(industry_data),
-        "posts": posts  # Bu satır ile SocialMediaPost verilerini şablona geçiyoruz
+        "posts": posts,  # Bu satır ile SocialMediaPost verilerini şablona geçiyoruz
     })
 
 def select_channel(request):
