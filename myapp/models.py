@@ -1,6 +1,7 @@
 from django.db import models
 
-class ChannelData(models.Model):
+
+class LatestData(models.Model):
     source_category = models.CharField(max_length=255, null=True, blank=True)
     author_name = models.CharField(max_length=255, null=True, blank=True)
     author_nick = models.CharField(max_length=255, null=True, blank=True)
@@ -20,7 +21,7 @@ class ScraperLog(models.Model):
     def __str__(self):
         return f"Last update: {self.last_update}"
 
-class LatestDataTable(models.Model):
+class Latest7Days(models.Model):
     source_category = models.CharField(max_length=255)
     selective_part = models.CharField(max_length=255)
     source = models.CharField(max_length=255)
@@ -35,7 +36,7 @@ class LatestDataTable(models.Model):
         verbose_name = "Son 7 Günlük Veri"
         verbose_name_plural = "Son 7 Günlük Veriler"
 
-class SocialMediaPost(models.Model):
+class MostSharedContent(models.Model):
     avatar = models.URLField(null=True, blank=True)
     follower_count = models.IntegerField(null=True, blank=True)
     following_count = models.IntegerField(null=True, blank=True)
@@ -54,6 +55,7 @@ class SocialMediaPost(models.Model):
     source = models.CharField(max_length=255, null=True, blank=True)
     selective_part = models.CharField(max_length=255, null=True, blank=True)
     created_time = models.DateField(null=True, blank=True)
+    source_category = models.CharField(max_length=255, null=True, blank=True)  # Yeni eklenen alan
 
     def __str__(self):
         return f"{self.name} - {self.create_time}"

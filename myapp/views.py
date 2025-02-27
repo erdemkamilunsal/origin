@@ -7,7 +7,7 @@ import json
 import pytz
 from django.db.models import DateField, ExpressionWrapper
 from datetime import timedelta, datetime
-from .models import ChannelData, LatestDataTable, SocialMediaPost
+from .models import LatestData, Latest7Days, MostSharedContent  # Model isimleri güncellendi
 from django.db.models import Sum
 import matplotlib.pyplot as plt
 import io
@@ -36,54 +36,65 @@ def login_view(request):
 
     return render(request, "login.html", {"form": form})
 
+
 def logout_view(request):
     logout(request)  # Kullanıcıyı oturumdan çıkar
     return redirect('login')  # Login sayfasına yönlendir
 
+
 @login_required
 def finance_primary(request):
-    data = ChannelData.objects.filter(source_category="finans", selective_part="primary")
+    data = LatestData.objects.filter(source_category="finans", selective_part="primary")  # ChannelData -> LatestData
     return render(request, 'finance_primary.html', {'data': data})
+
 
 @login_required
 def finance_selective(request):
-    data = ChannelData.objects.filter(source_category="finans", selective_part="selective")
+    data = LatestData.objects.filter(source_category="finans", selective_part="selective")  # ChannelData -> LatestData
     return render(request, 'finance_selective.html', {'data': data})
+
 
 @login_required
 def finance_corporate(request):
-    data = ChannelData.objects.filter(source_category="finans", selective_part="corporate")
+    data = LatestData.objects.filter(source_category="finans", selective_part="corporate")  # ChannelData -> LatestData
     return render(request, 'finance_corporate.html', {'data': data})
+
 
 @login_required
 def mey_primary(request):
-    data = ChannelData.objects.filter(source_category="mey", selective_part="primary")
+    data = LatestData.objects.filter(source_category="mey", selective_part="primary")  # ChannelData -> LatestData
     return render(request, 'mey_primary.html', {'data': data})
+
 
 @login_required
 def mey_selective(request):
-    data = ChannelData.objects.filter(source_category="mey", selective_part="selective")
+    data = LatestData.objects.filter(source_category="mey", selective_part="selective")  # ChannelData -> LatestData
     return render(request, 'mey_selective.html', {'data': data})
+
 
 @login_required
 def snacks_primary(request):
-    data = ChannelData.objects.filter(source_category="snacks-tr", selective_part="primary")
+    data = LatestData.objects.filter(source_category="snacks-tr", selective_part="primary")  # ChannelData -> LatestData
     return render(request, 'snacks_primary.html', {'data': data})
+
 
 @login_required
 def snacks_selective(request):
-    data = ChannelData.objects.filter(source_category="snacks-tr", selective_part="selective")
+    data = LatestData.objects.filter(source_category="snacks-tr", selective_part="selective")  # ChannelData -> LatestData
     return render(request, 'snacks_selective.html', {'data': data})
+
 
 @login_required
 def snacks_corporate(request):
-    data = ChannelData.objects.filter(source_category="snacks-tr", selective_part="corporate")
+    data = LatestData.objects.filter(source_category="snacks-tr", selective_part="corporate")  # ChannelData -> LatestData
     return render(request, 'snacks_corporate.html', {'data': data})
+
 
 @login_required
 def mey_int_primary(request):
-    data = ChannelData.objects.filter(source_category="mey-international", selective_part="primary")
+    data = LatestData.objects.filter(source_category="mey-international", selective_part="primary")  # ChannelData -> LatestData
     return render(request, 'mey_int_primary.html', {'data': data})
+
 
 @login_required
 def index(request):
@@ -96,12 +107,13 @@ def index(request):
         "snacks-tr": ["corporate", "primary", "selective", "corprimary", "pladis_categories"],
         "mey-international": ["primary"]
     }
-    # SocialMediaPost modelinden tüm paylaşımları alıyoruz
-    posts = SocialMediaPost.objects.all()
+    # MostSharedContent modelinden tüm paylaşımları alıyoruz
+    posts = MostSharedContent.objects.all()  # SocialMediaPost -> MostSharedContent
 
     return render(request, "index.html", {
-        "posts": posts,  # Bu satır ile SocialMediaPost verilerini şablona geçiyoruz
+        "posts": posts,  # Bu satır ile MostSharedContent verilerini şablona geçiyoruz
     })
+
 
 def select_channel(request):
     channels_to_find = {
@@ -118,6 +130,7 @@ def select_channel(request):
         return redirect('channel_dashboard', channel_name=channel_name)
 
     return render(request, 'select_channel.html', {'channels_to_find': channels_to_find})
+
 
 def channel_dashboard(request, channel_name):
     # İstanbul saat dilimi
@@ -144,7 +157,7 @@ def channel_dashboard(request, channel_name):
                 date_str = record_date.strftime("%Y-%m-%d")
 
                 # Veritabanından o gün için verileri çekiyoruz
-                daily_records = LatestDataTable.objects.filter(
+                daily_records = Latest7Days.objects.filter(  # LatestDataTable -> Latest7Days
                     source_category=industry,
                     selective_part=category,
                     source=channel_name,
@@ -164,6 +177,7 @@ def channel_dashboard(request, channel_name):
         "social_media_data": social_media_data,  # JSON verisini şablona gönderiyoruz, artık direk JSON değil
         "channel_name": channel_name
     })
+
 
 def base_context(request):
     channels_to_find = [
