@@ -6,153 +6,279 @@
     <title>{% block title %}eBrandValue Bekçi{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Menü Arka Planı ve Stil */
         .navbar-custom {
-            background-color: #ffffff; /* Soft beyazımsı gri */
+            background-color: #2b3e5e; /* Koyu gri tonu */
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
-
         .navbar-custom .navbar-nav .nav-link {
-            color: #495057; /* Soft gri, göz yormayan renk */
+            color: #ffffff;
+            padding: 10px 15px;
+            margin-top: 13px;
+            transition: all 0.3s ease;
+            border-radius: 5px;
         }
 
         .navbar-custom .navbar-nav .nav-link:hover {
-            color: #6c757d; /* Hoverda daha açık gri */
+            background-color: #6795c7;
+            color: #ffffff;
         }
 
-        .navbar-custom .navbar-brand {
-            color: #6c757d; /* Logo için soft gri ton */
-        }
-
-        .navbar-custom .navbar-toggler-icon {
-            background-color: #6c757d; /* Hamburger menü simgesi gri */
-        }
-
-        /* Kullanıcı adı ve çıkış butonu */
-        .navbar-text {
-            color: #495057;
-        }
-
-        .btn-logout {
-            background-color: #e0e0e0; /* Soft gri çıkış butonu */
-            color: #495057;
+        .navbar-toggler {
             border: none;
         }
 
+        .navbar-toggler-icon {
+            background-color: transparent;
+        }
+
+        .btn-logout {
+            background-color: #f04747;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+
         .btn-logout:hover {
-            background-color: #ced4da; /* Hoverda biraz daha açık gri */
-            color: #212529; /* Koyu gri metin rengi */
+            background-color: #d43f3f;
         }
 
         .dropdown-menu {
-            background-color: #ffffff; /* Dropdown menülerinin arka planı beyaz */
+            background-color: #3c5682;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .dropdown-item {
+            color: #d1d1d1;
+            transition: 0.3s;
         }
 
         .dropdown-item:hover {
-            background-color: #f1f3f5; /* Dropdown öğesi üzerine gelindiğinde yumuşak gri */
+            background-color: #3a3d41;
+            color: #ffffff;
         }
-   /* Kayan yazı için stil */
-    .scrolling-text {
-        background-color: #e0f7ff; /* Arka planı biraz daha açık mavi */
-        color: #7f9db9; /* Yazı rengini biraz daha açtık, koyu mavi */
-        font-family: 'Arial', sans-serif; /* Soft yazı tipi */
-        padding: 20px;
-        font-size: 12px;
-        font-weight: bold;
-        white-space: nowrap;
-        overflow: hidden;
-        position: relative;
-        margin-top: 10px; /* Menüyle arasında boşluk */
-        display: flex; /* Flexbox ile ortalama */
-        justify-content: center; /* Yatayda ortalama */
-        align-items: center; /* Dikeyde ortalama */
-    }
 
-    .scrolling-text p {
-        position: absolute;
-        animation: scrollText 20s linear infinite;
-        white-space: nowrap;
-        margin: 0;
-        display: flex; /* Yıldız ve yazıyı aynı hizada tutmak için */
-        align-items: center; /* Yıldız ile yazıyı dikeyde hizalar */
-    }
+        /* İç içe geçmiş menüler için CSS */
+        .dropdown-submenu {
+            position: relative;
+        }
 
-    .scrolling-text p::before {
-        content: "★ "; /* Turuncu yıldız */
-        color: #FFA500; /* Turuncu renk */
-        font-size: 15px; /* Yıldız boyutu */
-        margin-right: 5px; /* Yıldız ile yazı arasında boşluk */
-    }
+        .dropdown-submenu .dropdown-menu {
+            top: 0;
+            left: 100%;
+            margin-top: -1px;
+            display: none; /* Başlangıçta gizli */
+        }
 
-@keyframes scrollText {
-    0% {
-        left: 100%; /* Başlangıçta sağda başlar */
-    }
-    100% {
-        left: -100%; /* Sonunda solda kaybolur */
-    }
-}
+        /* Mouse üzerine gelince açılması için */
+        .dropdown-submenu:hover > .dropdown-menu {
+            display: block;
+        }
+
+        /* Mobil uyum için */
+        @media (max-width: 991px) {
+            .navbar-nav {
+                text-align: center;
+            }
+            .navbar-nav .nav-item {
+                margin-bottom: 10px;
+            }
+        }
+
     </style>
     {% load static %}
 </head>
 <body>
     <div class="container mt-4">
-        <nav class="navbar navbar-expand-lg navbar-custom">
-            <a class="navbar-brand" href="{% url 'index' %}">Dashboards</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <!-- Sosyal Medya Menüsü -->
-                    <!-- Finans Menüsü -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="financeDropdown" role="button" data-bs-toggle="dropdown">
-                            Finans
-                        </a>
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <a class="navbar-brand" href="{% url 'index' %}"><img src="{% static 'images/new_logo.png' %}" alt="Logo" width="150" height="29"></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <!-- Most Engaged Contents Menüsü (Dokunma) -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="mostEngagedDropdown" role="button" data-bs-toggle="dropdown">
+                    Most Engaged Contents
+                </a>
+                <ul class="dropdown-menu">
+                    <!-- Finans -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item dropdown-toggle" href="#">Finans</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'finance_corporate' %}">Corporate</a></li>
-                            <li><a class="dropdown-item" href="{% url 'finance_selective' %}">Selective</a></li>
-                            <li><a class="dropdown-item" href="{% url 'finance_primary' %}">Primary</a></li>
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Corporate</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='Finans' subcategory='Corporate' source='Twitter' %}">Twitter</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='Finans' subcategory='Corporate' source='Instagram' %}">Instagram</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='Finans' subcategory='Corporate' source='Facebook' %}">Facebook</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='Finans' subcategory='Corporate' source='Youtube' %}">Youtube</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Selective</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='Finans' subcategory='Selective' source='Twitter' %}">Twitter</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='Finans' subcategory='Selective' source='Instagram' %}">Instagram</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='Finans' subcategory='Selective' source='Facebook' %}">Facebook</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='Finans' subcategory='Selective' source='Youtube' %}">Youtube</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Primary</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='Finans' subcategory='Primary' source='Twitter' %}">Twitter</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='Finans' subcategory='Primary' source='Instagram' %}">Instagram</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='Finans' subcategory='Primary' source='Facebook' %}">Facebook</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='Finans' subcategory='Primary' source='Youtube' %}">Youtube</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                            </li>
+                            <!-- Alkol -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item dropdown-toggle" href="#">Alkol</a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Selective</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey' subcategory='selective' source='twitter' %}">Twitter</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey' subcategory='selective' source='instagram' %}">Instagram</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey' subcategory='selective' source='facebook' %}">Facebook</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey' subcategory='selective' source='youtube' %}">Youtube</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Primary</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey' subcategory='primary' source='twitter' %}">Twitter</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey' subcategory='primary' source='instagram' %}">Instagram</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey' subcategory='primary' source='facebook' %}">Facebook</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey' subcategory='primary' source='youtube' %}">Youtube</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </li>
+                    <!-- Snacks -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item dropdown-toggle" href="#">Snacks</a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Corporate</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='corporate' source='twitter' %}">Twitter</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='corporate' source='instagram' %}">Instagram</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='corporate' source='facebook' %}">Facebook</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='corporate' source='youtube' %}">Youtube</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Selective</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='selective' source='twitter' %}">Twitter</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='selective' source='instagram' %}">Instagram</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='selective' source='facebook' %}">Facebook</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='selective' source='youtube' %}">Youtube</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Primary</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='primary' source='twitter' %}">Twitter</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='primary' source='instagram' %}">Instagram</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='primary' source='facebook' %}">Facebook</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='primary' source='youtube' %}">Youtube</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Corprimary</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='corprimary' source='twitter' %}">Twitter</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='corprimary' source='instagram' %}">Instagram</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='corprimary' source='facebook' %}">Facebook</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='corprimary' source='youtube' %}">Youtube</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Pladis</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='pladis_categories' source='twitter' %}">Twitter</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='pladis_categories' source='instagram' %}">Instagram</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='pladis_categories' source='facebook' %}">Facebook</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='snacks-tr' subcategory='pladis_categories' source='youtube' %}">Youtube</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Mey Int</a>
+                                <ul class="dropdown-menu">
+                                <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Primary</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey-international' subcategory='primary' source='twitter' %}">Twitter</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey-international' subcategory='primary' source='instagram' %}">Instagram</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey-international' subcategory='primary' source='facebook' %}">Facebook</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey-international' subcategory='primary' source='youtube' %}">Youtube</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
 
-                    <!-- Mey Menüsü -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="meyDropdown" role="button" data-bs-toggle="dropdown">
-                            Alkol
-                        </a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="latestContentsDropdown" role="button" data-bs-toggle="dropdown">
+                    Latest Contents
+                </a>
+                <ul class="dropdown-menu">
+                    <!-- Finans -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item dropdown-toggle" href="#">Finans</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'mey_selective' %}">Selective</a></li>
-                            <li><a class="dropdown-item" href="{% url 'mey_primary' %}">Primary</a></li>
+                            <li><a class="dropdown-item" href="{% url 'latest_data' category='finans' subcategory='corporate' %}">Corporate</a></li>
+                            <li><a class="dropdown-item" href="{% url 'latest_data' category='finans' subcategory='selective' %}">Selective</a></li>
+                            <li><a class="dropdown-item" href="{% url 'latest_data' category='finans' subcategory='primary' %}">Primary</a></li>
                         </ul>
                     </li>
-
-                    <!-- Snacks-tr Menüsü -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="snacksDropdown" role="button" data-bs-toggle="dropdown">
-                            Snacks
-                        </a>
+                    <!-- Alkol -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item dropdown-toggle" href="#">Alkol</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'snacks_corporate' %}">Corporate</a></li>
-                            <li><a class="dropdown-item" href="{% url 'snacks_selective' %}">Selective</a></li>
-                            <li><a class="dropdown-item" href="{% url 'snacks_primary' %}">Primary</a></li>
+                            <li><a class="dropdown-item" href="{% url 'latest_data' category='mey' subcategory='selective' %}">Selective</a></li>
+                            <li><a class="dropdown-item" href="{% url 'latest_data' category='mey' subcategory='primary' %}">Primary</a></li>
                         </ul>
                     </li>
-
-                    <!-- Mey-International Menüsü -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="meyIntDropdown" role="button" data-bs-toggle="dropdown">
-                            Mey Int
-                        </a>
+                    <!-- Snacks -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item dropdown-toggle" href="#">Snacks</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'mey_int_primary' %}">Primary</a></li>
+                            <li><a class="dropdown-item" href="{% url 'latest_data' category='snacks-tr' subcategory='corporate' %}">Corporate</a></li>
+                            <li><a class="dropdown-item" href="{% url 'latest_data' category='snacks-tr' subcategory='selective' %}">Selective</a></li>
+                            <li><a class="dropdown-item" href="{% url 'latest_data' category='snacks-tr' subcategory='primary' %}">Primary</a></li>
+                            <li><a class="dropdown-item" href="{% url 'latest_data' category='snacks-tr' subcategory='corprimary' %}">Corprimary</a></li>
+                            <li><a class="dropdown-item" href="{% url 'latest_data' category='snacks-tr' subcategory='pladis_categories' %}">Pladis</a></li>
                         </ul>
                     </li>
+                    <!-- Mey Int -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item dropdown-toggle" href="#">Mey Int</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'latest_data' category='mey-international' subcategory='primary' %}">Primary</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
 
                     <!-- Sosyal Medya Kanalları Dropdown -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="socialMediaDropdown" role="button" data-bs-toggle="dropdown">
-                            Channels
+                            Last 7 Days
                         </a>
                         <ul class="dropdown-menu">
                             {% for channel in channels_to_find %}
@@ -188,6 +314,24 @@
         </div>
     </div>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- İç içe geçmiş menüler için JavaScript -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var dropdownSubmenu = document.querySelectorAll('.dropdown-submenu');
+
+            dropdownSubmenu.forEach(function(element) {
+                element.addEventListener('mouseenter', function() {
+                    this.querySelector('.dropdown-menu').style.display = 'block';
+                });
+
+                element.addEventListener('mouseleave', function() {
+                    this.querySelector('.dropdown-menu').style.display = 'none';
+                });
+            });
+        });
+    </script>
 </body>
 </html>

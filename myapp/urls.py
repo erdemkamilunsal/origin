@@ -7,16 +7,8 @@ urlpatterns = [
     path('', index, name='index'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
-    path('finance/corporate/', views.finance_corporate, name='finance_corporate'),
-    path('finance/selective/', views.finance_selective, name='finance_selective'),
-    path('finance/primary/', views.finance_primary, name='finance_primary'),
-    path('mey/selective/', views.mey_selective, name='mey_selective'),
-    path('mey/primary/', views.mey_primary, name='mey_primary'),
-    path('snacks/corporate/', views.snacks_corporate, name='snacks_corporate'),
-    path('snacks/selective/', views.snacks_selective, name='snacks_selective'),
-    path('snacks/primary/', views.snacks_primary, name='snacks_primary'),
-    path('mey_int/primary/', views.mey_int_primary, name='mey_int_primary'),
+    path('latest/<str:category>/<str:subcategory>/', views.latest_data, name='latest_data'),
     path('dashboard/<str:channel_name>/', views.channel_dashboard, name='channel_dashboard'),
-    path('select_channel/', views.select_channel, name='select_channel'),
+    path('most_engaged/<str:category>/<str:subcategory>/<str:source>/', views.most_engaged_content, name='most_engaged_content'),
 ]
 

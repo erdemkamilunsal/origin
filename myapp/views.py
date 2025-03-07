@@ -41,61 +41,6 @@ def logout_view(request):
     logout(request)  # Kullanıcıyı oturumdan çıkar
     return redirect('login')  # Login sayfasına yönlendir
 
-
-@login_required
-def finance_primary(request):
-    data = LatestData.objects.filter(source_category="finans", selective_part="primary")  # ChannelData -> LatestData
-    return render(request, 'finance_primary.html', {'data': data})
-
-
-@login_required
-def finance_selective(request):
-    data = LatestData.objects.filter(source_category="finans", selective_part="selective")  # ChannelData -> LatestData
-    return render(request, 'finance_selective.html', {'data': data})
-
-
-@login_required
-def finance_corporate(request):
-    data = LatestData.objects.filter(source_category="finans", selective_part="corporate")  # ChannelData -> LatestData
-    return render(request, 'finance_corporate.html', {'data': data})
-
-
-@login_required
-def mey_primary(request):
-    data = LatestData.objects.filter(source_category="mey", selective_part="primary")  # ChannelData -> LatestData
-    return render(request, 'mey_primary.html', {'data': data})
-
-
-@login_required
-def mey_selective(request):
-    data = LatestData.objects.filter(source_category="mey", selective_part="selective")  # ChannelData -> LatestData
-    return render(request, 'mey_selective.html', {'data': data})
-
-
-@login_required
-def snacks_primary(request):
-    data = LatestData.objects.filter(source_category="snacks-tr", selective_part="primary")  # ChannelData -> LatestData
-    return render(request, 'snacks_primary.html', {'data': data})
-
-
-@login_required
-def snacks_selective(request):
-    data = LatestData.objects.filter(source_category="snacks-tr", selective_part="selective")  # ChannelData -> LatestData
-    return render(request, 'snacks_selective.html', {'data': data})
-
-
-@login_required
-def snacks_corporate(request):
-    data = LatestData.objects.filter(source_category="snacks-tr", selective_part="corporate")  # ChannelData -> LatestData
-    return render(request, 'snacks_corporate.html', {'data': data})
-
-
-@login_required
-def mey_int_primary(request):
-    data = LatestData.objects.filter(source_category="mey-international", selective_part="primary")  # ChannelData -> LatestData
-    return render(request, 'mey_int_primary.html', {'data': data})
-
-
 @login_required
 def index(request):
     istanbul_tz = pytz.timezone('Europe/Istanbul')
@@ -114,23 +59,30 @@ def index(request):
         "posts": posts,  # Bu satır ile MostSharedContent verilerini şablona geçiyoruz
     })
 
+def most_engaged_content(request, category, subcategory, source):
+    # URL'den gelen parametreleri küçük harfe çevir
+    category_lower = category.lower()
+    subcategory_lower = subcategory.lower()
+    source_lower = source.lower()
 
-def select_channel(request):
-    channels_to_find = {
-        "twitter", "facebook", "facebook_page_comment", "facebook_page_like",
-        "youtube", "youtube_shorts", "instagram", "instagram_comment",
-        "tiktok", "pinterest", "rss", "apple_app_store_comment",
-        "google_play_store_comment", "linkedin", "donanimhaber", "eksi_sozluk",
-        "inci_sozluk", "sikayetvar", "uludag_sozluk"
-    }
+    # Eğer URL'deki parametreler küçük harf değilse, küçük harfe yönlendir
+    if (category != category_lower or subcategory != subcategory_lower or source != source_lower):
+        return redirect('most_engaged_content', category=category_lower, subcategory=subcategory_lower, source=source_lower)
 
-    # Eğer bir kanal seçildiyse, channel_dashboard'a yönlendirme yap
-    if request.GET.get('channel_name'):
-        channel_name = request.GET['channel_name']
-        return redirect('channel_dashboard', channel_name=channel_name)
+    # Veritabanından ilgili filtrelemeyi yap (küçük harfe çevrilmiş parametrelerle)
+    contents = MostSharedContent.objects.filter(
+        source_category__iexact=category_lower,  # Büyük-küçük harf duyarsız filtreleme
+        selective_part__iexact=subcategory_lower,
+        source__iexact=source_lower
+    ).order_by('-created_time')
 
-    return render(request, 'select_channel.html', {'channels_to_find': channels_to_find})
-
+    # Template'e verileri gönder
+    return render(request, 'most_engaged_content.html', {
+        'contents': contents,
+        'category': category,  # Orijinal kategori adını gönder
+        'subcategory': subcategory,  # Orijinal alt kategori adını gönder
+        'source': source  # Orijinal kaynak adını gönder
+    })
 
 def channel_dashboard(request, channel_name):
     # İstanbul saat dilimi
@@ -178,7 +130,23 @@ def channel_dashboard(request, channel_name):
         "channel_name": channel_name
     })
 
+def latest_data(request, category, subcategory):
+    # URL'den gelen parametreleri küçük harfe çevir
+    category_lower = category.lower()
+    subcategory_lower = subcategory.lower()
 
+    # Veritabanından ilgili filtrelemeyi yap
+    data = LatestData.objects.filter(
+        source_category__iexact=category_lower,  # Büyük-küçük harf duyarsız filtreleme
+        selective_part__iexact=subcategory_lower
+    ).order_by('-created_time')
+
+    # Template'e verileri gönder
+    return render(request, 'latest_data.html', {
+        'data': data,
+        'category': category,  # Orijinal kategori adını gönder
+        'subcategory': subcategory  # Orijinal alt kategori adını gönder
+    })
 def base_context(request):
     channels_to_find = [
         "twitter", "facebook", "facebook_page_comment", "facebook_page_like",

@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ category }} - {{ subcategory }}</title>
+    <style>
+        /* Tweet Görünümü için Stil */
+        .tweet-wrapper {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);  /* 4 sütunlu grid düzeni */
+            gap: 20px; /* Tweetler arasındaki boşluk */
+            width: 100%;
+            max-width: 1300px; /* Sayfa genişliğini sınırlıyoruz */
+            margin: 0 auto;
+        }
+
+        .tweet-container {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e1e8ed;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .tweet-header {
+            display: flex;
+            align-items: center;
+        }
+
+        .tweet-header img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .tweet-header .user-info {
+            flex-grow: 1;
+        }
+
+        .tweet-header .name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #14171a;
+        }
+
+        .tweet-header .nick {
+            color: #657786;
+            font-size: 14px;
+        }
+
+        .tweet-header .follow-info {
+            font-size: 12px;
+            color: #657786;
+            margin-top: 5px;
+        }
+
+        .tweet-content {
+            margin-top: 10px;
+            font-size: 15px;
+            color: #14171a;
+            line-height: 1.5;
+        }
+
+        .tweet-link {
+            color: #1da1f2;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .tweet-link:hover {
+            text-decoration: underline;
+        }
+
+        .tweet-meta {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #657786;
+        }
+
+        .tweet-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #657786;
+        }
+
+        .tweet-stats span {
+            margin-right: 15px;
+        }
+
+        .tweet-source {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #657786;
+        }
+
+        .tweet-reply {
+            margin-top: 10px;
+            padding: 10px;
+            border-left: 2px solid #1da1f2;
+            background-color: #f0f8ff;
+            font-size: 14px;
+            color: #14171a;
+        }
+
+        .tweet-brands {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #657786;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Başlık -->
+    <h1>{{ category }} - {{ subcategory }}</h1>
+
+    <!-- Tweetleri dört sütun olarak göster -->
+    <div class="tweet-wrapper">
+        {% for item in data %}
+        <div class="tweet-container">
+            <!-- Tweet Başlık -->
+            <div class="tweet-header">
+                <img src="{{ item.author_avatar }}" alt="Profil Fotoğrafı">
+                <div class="user-info">
+                    <div class="name">{{ item.author_name }}</div>
+                    <div class="nick">@{{ item.author_nick }}</div>
+                    <div class="follow-info">Takipçi: {{ item.author_follower_count }} | Takip Edilen: {{ item.author_following_count }}</div>
+                </div>
+            </div>
+
+            <!-- Tweet İçeriği -->
+            <div class="tweet-content">
+                {{ item.body|truncatechars:200 }}
+            </div>
+
+            <!-- Link Varsa -->
+            {% if item.link %}
+            <div>
+                <a href="{{ item.link }}" class="tweet-link">Tweet bağlantısını gör</a>
+            </div>
+            {% endif %}
+
+            <!-- Zaman Bilgisi -->
+            <div class="tweet-meta">{{ item.created_time }} - {{ item.created_time|date:"H:i" }}</div>
+
+            <!-- Tweet İstatistikleri -->
+            <div class="tweet-stats">
+                <span>💬 {{ item.comment_count }}</span>
+                <span>🔁 {{ item.retweet_count }}</span>
+                <span>❤️ {{ item.favourite_count }}</span>
+                <span>👀 {{ item.view_count }}</span>
+                <span>📌 {{ item.quote_count }}</span>
+            </div>
+
+            <!-- Kaynak Bilgisi -->
+            <div class="tweet-source">
+                Kaynak: {{ item.source }}
+            </div>
+
+            <!-- Markalar -->
+            <div class="tweet-brands">
+                İlgili Markalar: {{ item.brands }}
+            </div>
+        </div>
+        {% empty %}
+        <p>Bu kategori için içerik bulunamadı.</p>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
+
+{% endblock %}
