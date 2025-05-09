@@ -40,7 +40,7 @@ def fetch_last_7_days(session, base_url, selective, channels_to_find, today):
         for channel in channels_to_find:
             extra_url = (
                 f"https://{base_url}.ebrandvalue.com/industries/{selective}/social/posts/"
-                f"?path_param=posts&source={channel}&since={since_str}&until={until_str}"
+                f"?path_param=posts&source={channel}&since={since_str}&until={until_str}&limit=1"
             )
             print(f"{extra_url} verisi çekiliyor...")
 
@@ -72,7 +72,7 @@ def fetch_last_7_days(session, base_url, selective, channels_to_find, today):
             print(f"✅ {base_url} - {selective} - {channel} için yeni veri eklendi.")
 def fetch_yesterday_data(session, base_url, selective, channels_to_find, today):
     for channel in channels_to_find:
-        current_url = f"https://{base_url}.ebrandvalue.com/industries/{selective}/social/posts/?path_param=posts&source={channel}&start=0"
+        current_url = f"https://{base_url}.ebrandvalue.com/industries/{selective}/social/posts/?path_param=posts&source={channel}&start=0&limit=1"
         print(f"{current_url} verisi çekiliyor...")
 
         response = session.get(current_url)
@@ -117,7 +117,7 @@ def fetch_most_shared(session, base_url, selective, kanallar):
     until_str = end_date.strftime("%d.%m.%Y 00:00").replace(" ", "%20")
 
     for channel in kanallar:
-        current_url = f"https://{base_url}.ebrandvalue.com/industries/{selective}/social/posts/?path_param=posts&source={channel}&most_shared=true&since={since_str}&until={until_str}"
+        current_url = f"https://{base_url}.ebrandvalue.com/industries/{selective}/social/posts/?path_param=posts&source={channel}&most_shared=true&since={since_str}&until={until_str}&limit=10"
         print(f"{current_url} verisi çekiliyor...")
 
         response = session.get(current_url)
@@ -132,7 +132,7 @@ def fetch_most_shared(session, base_url, selective, kanallar):
             source_category=base_url,
             selective_part=selective,
             source=channel,
-            created_time=start_date.date()
+            created_time=today.date()  # Bugün tarihli veriler silinecek
         ).delete()
 
         for entry in all_data:
@@ -173,7 +173,8 @@ class Command(BaseCommand):
             "snacks-tr": ["corporate", "primary", "selective", "corprimary", "pladis_categories"],
             "mey-international": ["primary"],
             "fastfood-tr": ["corporate"],
-            "transportation-tr": ["corporate"]
+            "transportation-tr": ["corporate"],
+            "airtravel-tr": ["corporate"]
         }
         channels_to_find = {
             "twitter", "facebook", "facebook_page_comment", "facebook_page_like",

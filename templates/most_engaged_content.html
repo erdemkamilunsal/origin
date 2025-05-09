@@ -8,67 +8,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ category }} - {{ subcategory }} - {{ source }}</title>
     <style>
+        /* Modernize edilmiş stil */
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        h1 span {
+            font-weight: 300;
+            color: #1da1f2; /* Twitter mavi tonunda */
+        }
+
         .tweet-wrapper {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);  /* 2 sütunlu grid düzeni */
-            gap: 20px; /* Sütunlar arasındaki boşluk */
+            grid-template-columns: repeat(4, 1fr); /* 4 sütunlu grid düzeni */
+            gap: 20px;
             width: 100%;
             max-width: 1300px; /* Sayfa genişliğini sınırlıyoruz */
+            margin: 0 auto;
         }
 
         .tweet-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
             background-color: white;
             padding: 15px;
             border-radius: 10px;
             border: 1px solid #e1e8ed;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
         .tweet-header {
             display: flex;
             align-items: center;
         }
+
         .tweet-header img {
-            width: 50px;
-            height: 50px;
+            width: 30px; /* Görsel boyutunu biraz daha büyüttüm */
+            height: 30px;
             border-radius: 50%;
             margin-right: 10px;
         }
+
         .tweet-header .user-info {
             flex-grow: 1;
         }
+
         .tweet-header .name {
             font-weight: bold;
-            font-size: 16px;
+            font-size: 12px;
             color: #14171a;
         }
+
         .tweet-header .nick {
             color: #657786;
-            font-size: 14px;
+            font-size: 8px;
         }
+
         .tweet-header .follow-info {
             font-size: 12px;
             color: #657786;
             margin-top: 5px;
         }
+
         .tweet-content {
             margin-top: 10px;
             font-size: 15px;
             color: #14171a;
             line-height: 1.5;
         }
+
         .tweet-link {
             color: #1da1f2;
             text-decoration: none;
             font-size: 14px;
         }
+
         .tweet-link:hover {
             text-decoration: underline;
         }
-        .tweet-meta {
-            margin-top: 10px;
-            font-size: 13px;
-            color: #657786;
-        }
+
         .tweet-stats {
             display: flex;
             justify-content: space-between;
@@ -76,14 +107,35 @@
             font-size: 13px;
             color: #657786;
         }
+
         .tweet-stats span {
             margin-right: 15px;
         }
+
         .tweet-source {
-            margin-top: 10px;
-            font-size: 12px;
-            color: #657786;
+            margin-top: 12px;
+            padding: 6px 10px;
+            background-color: #e8f5fd;
+            color: #0f1419;
+            font-size: 13px;
+            font-weight: bold;
+            border-left: 4px solid #1da1f2;
+            border-radius: 6px;
+            display: inline-block;
         }
+
+        .tweet-meta {
+            margin-top: 12px;
+            padding: 6px 10px;
+            background-color: #e8f5fd;
+            color: #0f1419;
+            font-size: 13px;
+            font-weight: bold;
+            border-left: 4px solid #1da1f2;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
         .tweet-reply {
             margin-top: 10px;
             padding: 10px;
@@ -92,6 +144,7 @@
             font-size: 14px;
             color: #14171a;
         }
+
         .tweet-brands {
             margin-top: 10px;
             font-size: 14px;
@@ -120,7 +173,7 @@
 
             <!-- Tweet İçeriği -->
             <div class="tweet-content">
-                {{ content.content|truncatechars:200 }}
+                {{ content.content|truncatechars:50 }}
             </div>
 
             <!-- Link Varsa -->
@@ -147,10 +200,7 @@
                 Kaynak: {{ content.source }}
             </div>
 
-            <!-- Markalar -->
-            <div class="tweet-brands">
-                İlgili Markalar: {{ content.brands }}
-            </div>
+
         </div>
         {% empty %}
         <p>Bu kategori için içerik bulunamadı.</p>

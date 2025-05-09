@@ -93,15 +93,15 @@
     {% load static %}
 </head>
 <body>
-    <div class="container mt-4">
-<nav class="navbar navbar-expand-lg navbar-custom">
+<div class="container mt-4">
+    <nav class="navbar navbar-expand-lg navbar-custom">
     <a class="navbar-brand" href="{% url 'index' %}"><img src="{% static 'images/new_logo.png' %}" alt="Logo" width="150" height="29"></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
-            <!-- Most Engaged Contents Menüsü (Dokunma) -->
+            <!-- Most Engaged Contents -->
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="mostEngagedDropdown" role="button" data-bs-toggle="dropdown">
                     Most Engaged Contents
@@ -140,7 +140,7 @@
                             </li>
                         </ul>
                             </li>
-                            <!-- Alkol -->
+                    <!-- Alkol -->
                     <li class="dropdown-submenu">
                         <a class="dropdown-item dropdown-toggle" href="#">Alkol</a>
                         <ul class="dropdown-menu">
@@ -215,23 +215,72 @@
                             </li>
                         </ul>
                     </li>
+                    <!-- Mey Int -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item dropdown-toggle" href="#">Mey Int</a>
+                        <ul class="dropdown-menu">
                             <li class="dropdown-submenu">
-                                <a class="dropdown-item dropdown-toggle" href="#">Mey Int</a>
-                                <ul class="dropdown-menu">
-                                <li class="dropdown-submenu">
                                 <a class="dropdown-item dropdown-toggle" href="#">Primary</a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey-international' subcategory='primary' source='twitter' %}">Twitter</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey-international' subcategory='primary' source='instagram' %}">Instagram</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey-international' subcategory='primary' source='facebook' %}">Facebook</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey-international' subcategory='primary' source='youtube' %}">Youtube</a></li>
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey-international' subcategory='primary' source='twitter' %}">Twitter</a></li>
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey-international' subcategory='primary' source='instagram' %}">Instagram</a></li>
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey-international' subcategory='primary' source='facebook' %}">Facebook</a></li>
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='mey-international' subcategory='primary' source='youtube' %}">Youtube</a></li>
                                 </ul>
                             </li>
                         </ul>
                     </li>
+                    <!-- Airtravel -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item dropdown-toggle" href="#">Airtravel</a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Corporate</a>
+                                <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='airtravel-tr' subcategory='corporate' source='twitter' %}">Twitter</a></li>
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='airtravel-tr' subcategory='corporate' source='instagram' %}">Instagram</a></li>
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='airtravel-tr' subcategory='corporate' source='facebook' %}">Facebook</a></li>
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='airtravel-tr' subcategory='corporate' source='youtube' %}">Youtube</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Fastfood -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item dropdown-toggle" href="#">Fastfood</a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Corporate</a>
+                                <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='fastfood-tr' subcategory='corporate' source='twitter' %}">Twitter</a></li>
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='fastfood-tr' subcategory='corporate' source='instagram' %}">Instagram</a></li>
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='fastfood-tr' subcategory='corporate' source='facebook' %}">Facebook</a></li>
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='fastfood-tr' subcategory='corporate' source='youtube' %}">Youtube</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Transportation -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item dropdown-toggle" href="#">Transportation</a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Corporate</a>
+                                <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='transportation-tr' subcategory='corporate' source='twitter' %}">Twitter</a></li>
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='transportation-tr' subcategory='corporate' source='instagram' %}">Instagram</a></li>
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='transportation-tr' subcategory='corporate' source='facebook' %}">Facebook</a></li>
+                                <li><a class="dropdown-item" href="{% url 'most_engaged_content' category='transportation-tr' subcategory='corporate' source='youtube' %}">Youtube</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+
+
                 </ul>
             </li>
 
+            <!-- Latest Contents Dropdown -->
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="latestContentsDropdown" role="button" data-bs-toggle="dropdown">
                     Latest Contents
@@ -272,11 +321,39 @@
                             <li><a class="dropdown-item" href="{% url 'latest_data' category='mey-international' subcategory='primary' %}">Primary</a></li>
                         </ul>
                     </li>
+
+                    <!-- Airtravel -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item dropdown-toggle" href="#">Airtravel</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'latest_data' category='airtravel-tr' subcategory='corporate' %}">Corporate</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Fastfood -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item dropdown-toggle" href="{% url 'latest_data' category='fastfood-tr' subcategory='corporate' %}">Fastfood</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'latest_data' category='fastfood-tr' subcategory='corporate' %}">Corporate</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Transportation -->
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item dropdown-toggle" href="#">Transportation</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'latest_data' category='transportation-tr' subcategory='corporate' %}">Corporate</a></li>
+                        </ul>
+                    </li>
+
+
+
+
                 </ul>
             </li>
 
-                    <!-- Sosyal Medya Kanalları Dropdown -->
-                    <li class="nav-item dropdown">
+            <!-- Sosyal Medya Kanalları Dropdown -->
+            <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="socialMediaDropdown" role="button" data-bs-toggle="dropdown">
                             Last 7 Days
                         </a>
@@ -288,10 +365,17 @@
                             {% endfor %}
                         </ul>
                     </li>
-                </ul>
+            <a class="nav-link" href="/youtube_channel">YouTube Channel</a>
 
-                <!-- Sağ kısma kullanıcı adı ve logout ekleyelim -->
-                <ul class="navbar-nav ms-auto d-flex align-items-center"> <!-- d-flex ve align-items-center ile hizalama -->
+
+        <!-- Menü boş bırakıldı -->
+    </ul>
+</li>
+
+        </ul>
+
+            <!-- Login & Logout -->
+        <ul class="navbar-nav ms-auto d-flex align-items-center"> <!-- d-flex ve align-items-center ile hizalama -->
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <span class="navbar-text">{{ user.username|capfirst }}</span> <!-- Kullanıcı adı ilk harf büyük -->
@@ -305,7 +389,7 @@
                     </li>
                 {% endif %}
             </ul>
-            </div>
+    </div>
         </nav>
         <hr class="my-4" style="solid #495057; border-radius: 1px;">
         <div class="mt-4">

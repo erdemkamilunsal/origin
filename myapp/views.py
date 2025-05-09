@@ -13,6 +13,9 @@ import matplotlib.pyplot as plt
 import io
 import base64
 from django.utils import timezone
+from .forms import YouTubeURLForm
+import requests
+import re
 
 
 def login_view(request):
@@ -50,7 +53,10 @@ def index(request):
         "finans": ["corporate", "selective", "primary"],
         "mey": ["primary", "selective"],
         "snacks-tr": ["corporate", "primary", "selective", "corprimary", "pladis_categories"],
-        "mey-international": ["primary"]
+        "mey-international": ["primary"],
+        "fastfood-tr": ["corporate"],
+        "transportation-tr": ["corporate"],
+        "airtravel-tr": ["corporate"]
     }
     # MostSharedContent modelinden tüm paylaşımları alıyoruz
     posts = MostSharedContent.objects.all()  # SocialMediaPost -> MostSharedContent
@@ -94,7 +100,10 @@ def channel_dashboard(request, channel_name):
         "finans": ["corporate", "selective", "primary"],
         "mey": ["primary", "selective"],
         "snacks-tr": ["corporate", "primary", "selective", "corprimary", "pladis_categories"],
-        "mey-international": ["primary"]
+        "mey-international": ["primary"],
+        "fastfood-tr": ["corporate"],
+        "transportation-tr": ["corporate"],
+        "airtravel-tr": ["corporate"]
     }
 
     social_media_data = {}
@@ -158,3 +167,38 @@ def base_context(request):
     return {
         'channels_to_find': channels_to_find
     }
+
+
+def get_channel_id(url):
+    try:
+        # YouTube kanal sayfasını çek
+        response = requests.get(url)
+        response.raise_for_status()  # Eğer bağlantı başarısızsa, hata fırlat
+
+        # Sayfa kaynağını al
+        page_content = response.text
+
+        # <link rel="alternate" ... > etiketinden kanal ID'sini çek
+        match_link = re.search(r'<link rel="alternate"[^>]*href="https://www\.youtube\.com/feeds/videos\.xml\?channel_id=([a-zA-Z0-9_-]+)"', page_content)
+        if match_link:
+            return match_link.group(1)
+
+        return None  # Kanal ID'si bulunamazsa None döndür
+    except requests.exceptions.RequestException as e:
+        return None
+
+def youtube_channel_id_view(request):
+    channel_id = None
+    error = None
+
+    if request.method == 'POST':
+        url = request.POST.get('url', '')
+        if url:
+            try:
+                channel_id = get_channel_id(url)
+                if not channel_id:
+                    error = "Geçersiz YouTube kanal URL'si. Lütfen doğru formatta bir URL giriniz."
+            except Exception as e:
+                error = str(e)
+
+    return render(request, 'youtube_channel.html', {'channel_id': channel_id, 'error': error})
