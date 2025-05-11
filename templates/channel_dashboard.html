@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ channel_name }} Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
     <style>
         .chart-container {
             display: flex;
@@ -15,77 +15,89 @@
             justify-content: space-between;
         }
         .chart {
-            width: 48%;  /* Yana yana 2 grafik sığacak şekilde */
+            width: 48%;
             margin-bottom: 20px;
         }
-        canvas {
-            width: 100%;
-            height: 300px;  /* Yüksekliği 300px yapıyoruz */
+        .chart-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 16px;
+            transition: box-shadow 0.3s ease;
         }
-        .chart h3 {
+        .chart-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .chart-title {
             text-align: center;
-            width: 100%;
+            font-weight: bold;
             margin-bottom: 10px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
 
-    {% if social_media_data %}
-        <div id="chart-container" class="chart-container">
-            {% for key, value in social_media_data.items %}
-                <div class="chart">
-
-                    <canvas id="chart-{{ key }}" width="400" height="200"></canvas>
+{% if social_media_data %}
+    <div id="chart-container" class="chart-container">
+        {% for key, value in social_media_data.items %}
+            <div class="chart">
+                <div class="chart-card">
+                    <div class="chart-title" id="title-{{ key }}"></div>
+                    <div id="highchart-{{ key }}" style="height: 400px;"></div>
                     <script>
-                        // JSON verisini JavaScript'e aktarıyoruz
-                        var data = {{ value|safe }};  // Python tarafında direkt veriyi almak
+                        var data = {{ value|safe }};
                         var dates = data.map(item => item.date);
-                        var totals = data.map(item => item.total_content.reduce((a, b) => a + b, 0));  // Verilerin toplamını alıyoruz
+                        var totals = data.map(item => item.total_content.reduce((a, b) => a + b, 0));
 
-                        // Key değerini düzenleme: '-' yerine boşluk koy, ilk harfleri büyük yap
-                        var formattedKey = '{{ key }}'
-                            .replace(/-/g, ' ') // '-' karakterlerini boşluk ile değiştir
-                            .replace(/\b\w/g, char => char.toUpperCase()); // Her kelimenin ilk harfini büyük yap
+                        var rawKey = '{{ key }}';
+                        var formattedKey = rawKey.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+                        document.getElementById('title-{{ key }}').innerText = formattedKey;
 
-                        // Grafik oluşturma
-                        var ctx = document.getElementById('chart-{{ key }}').getContext('2d');
-                        var chart = new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: dates,
-                                datasets: [{
-                                    label: formattedKey + ' Son 7 Gün', // Güncellenmiş key burada kullanılıyor
-                                    data: totals,
-                                    borderColor: 'rgb(54, 162, 235)', // Mavi çizgi rengi
-                                    tension: 0.1, // Çizgilerin eğimi (daha yumuşak)
-                                    pointBackgroundColor: 'rgb(54, 162, 235)', // Mavi nokta rengi
-                                    pointRadius: 3, // Noktaların boyutu (varsayılan)
-                                    pointHoverBackgroundColor: 'rgb(75, 192, 192)', // Hover durumundaki nokta rengi (yeşil)
-                                    pointHoverRadius: 5, // Hover durumunda nokta büyüklüğü
-                                    pointBorderColor: 'white', // Noktaların kenar rengi
-                                    pointBorderWidth: 2, // Nokta kenar genişliği
-                                }]
+                        Highcharts.chart('highchart-{{ key }}', {
+                            chart: {
+                                type: 'line',
+                                height: 400
                             },
-                            options: {
-                                scales: {
-                                    x: {
-                                        type: 'category',
-                                        labels: dates
-                                    },
-                                    y: {
-                                        beginAtZero: true
-                                    }
+                            title: {
+                                text: null
+                            },
+                            xAxis: {
+                                categories: dates
+                            },
+                            yAxis: {
+                                title: {
+                                    text: 'Toplam'
                                 }
+                            },
+                            tooltip: {
+                                valueSuffix: ' İçerik'
+                            },
+                            plotOptions: {
+                                line: {
+                                    dataLabels: {
+                                        enabled: true
+                                    },
+                                    enableMouseTracking: true
+                                }
+                            },
+                            series: [{
+                                name: formattedKey,
+                                data: totals
+                            }],
+                            credits: {
+                                enabled: false
                             }
                         });
                     </script>
                 </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>No data available for this channel.</p>
-    {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No data available for this channel.</p>
+{% endif %}
 </body>
 </html>
 {% endblock %}

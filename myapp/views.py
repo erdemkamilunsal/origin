@@ -39,7 +39,6 @@ def login_view(request):
 
     return render(request, "login.html", {"form": form})
 
-
 def logout_view(request):
     logout(request)  # Kullanıcıyı oturumdan çıkar
     return redirect('login')  # Login sayfasına yönlendir
@@ -65,6 +64,7 @@ def index(request):
         "posts": posts,  # Bu satır ile MostSharedContent verilerini şablona geçiyoruz
     })
 
+@login_required
 def most_engaged_content(request, category, subcategory, source):
     # URL'den gelen parametreleri küçük harfe çevir
     category_lower = category.lower()
@@ -90,6 +90,7 @@ def most_engaged_content(request, category, subcategory, source):
         'source': source  # Orijinal kaynak adını gönder
     })
 
+@login_required
 def channel_dashboard(request, channel_name):
     # İstanbul saat dilimi
     istanbul_tz = pytz.timezone('Europe/Istanbul')
@@ -139,6 +140,7 @@ def channel_dashboard(request, channel_name):
         "channel_name": channel_name
     })
 
+@login_required
 def latest_data(request, category, subcategory):
     # URL'den gelen parametreleri küçük harfe çevir
     category_lower = category.lower()
@@ -156,6 +158,7 @@ def latest_data(request, category, subcategory):
         'category': category,  # Orijinal kategori adını gönder
         'subcategory': subcategory  # Orijinal alt kategori adını gönder
     })
+
 def base_context(request):
     channels_to_find = [
         "twitter", "facebook", "facebook_page_comment", "facebook_page_like",
@@ -187,6 +190,7 @@ def get_channel_id(url):
     except requests.exceptions.RequestException as e:
         return None
 
+
 def youtube_channel_id_view(request):
     channel_id = None
     error = None
@@ -202,3 +206,4 @@ def youtube_channel_id_view(request):
                 error = str(e)
 
     return render(request, 'youtube_channel.html', {'channel_id': channel_id, 'error': error})
+

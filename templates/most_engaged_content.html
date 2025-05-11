@@ -167,7 +167,7 @@
                 <div class="user-info">
                     <div class="name">{{ content.name }}</div>
                     <div class="nick">@{{ content.nick }}</div>
-                    <div class="follow-info">Takipçi: {{ content.follower_count }} | Takip Edilen: {{ content.following_count }}</div>
+                    <div class="follow-info">Follower Count: {{ content.follower_count }}</div>
                 </div>
             </div>
 
@@ -179,7 +179,7 @@
             <!-- Link Varsa -->
             {% if content.link %}
             <div>
-                <a href="{{ content.link }}" class="tweet-link">Tweet bağlantısını gör</a>
+                <a href="{{ content.link }}" class="tweet-link">İçeriği gör</a>
             </div>
             {% endif %}
 

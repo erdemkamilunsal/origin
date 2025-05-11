@@ -4,17 +4,16 @@ from bs4 import BeautifulSoup
 import json
 from datetime import datetime, timedelta
 import pytz
+import os
+import django
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from unidecode import unidecode
 from django.core.management.base import BaseCommand
 from myapp.models import MostSharedContent, ScraperLog, LatestData, Latest7Days
 
 def update_scraper_log():
-    log_entry = ScraperLog.objects.first()
-    if log_entry:
-        log_entry.save()
-    else:
-        ScraperLog.objects.create()
+    log_entry, _ = ScraperLog.objects.get_or_create(id=1)
+    log_entry.save()
 def fetch_data(session, url):
     try:
         response = session.get(url, timeout=10)
@@ -211,3 +210,4 @@ class Command(BaseCommand):
 
         end_time = time.time()
         print(f"Scraper tamamlandı! Toplam süre: {end_time - start_time:.2f} saniye.")
+        update_scraper_log()

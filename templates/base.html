@@ -364,15 +364,20 @@
                                 <li><a class="dropdown-item" href="#">Kanallar bulunamadı.</a></li>
                             {% endfor %}
                         </ul>
-                    </li>
-            <a class="nav-link" href="/youtube_channel">YouTube Channel</a>
+            </li>
+            <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            Others
+                        </a>
+                        <ul class="dropdown-menu">
 
+                                <li><a class="dropdown-item" href="/youtube_channel">Youtube Channel ID</a></li>
 
-        <!-- Menü boş bırakıldı -->
+                        </ul>
+            </li>
+
     </ul>
-</li>
 
-        </ul>
 
             <!-- Login & Logout -->
         <ul class="navbar-nav ms-auto d-flex align-items-center"> <!-- d-flex ve align-items-center ile hizalama -->
@@ -392,11 +397,17 @@
     </div>
         </nav>
         <hr class="my-4" style="solid #495057; border-radius: 1px;">
+        <div style="height: 30px; width: 1300px; background-color: #f0f0f0; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+        <span style="font-size: 14px; color: #333;">
+          Last Update: {{ last_scrape_time }}
+        </span>
+        </div>
         <div class="mt-4">
             {% block content %}
             {% endblock %}
         </div>
     </div>
+
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,12 +1,103 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
 <!DOCTYPE html>
 <html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ channel_name }} Dashboard</title>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <style>
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .chart {
+            width: 48%;
+            margin-bottom: 20px;
+        }
+        .chart-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 16px;
+            transition: box-shadow 0.3s ease;
+        }
+        .chart-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .chart-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
 <body>
 
+{% if social_media_data %}
+    <div id="chart-container" class="chart-container">
+        {% for key, value in social_media_data.items %}
+            <div class="chart">
+                <div class="chart-card">
+                    <div class="chart-title" id="title-{{ key }}"></div>
+                    <div id="highchart-{{ key }}" style="height: 400px;"></div>
+                    <script>
+                        var data = {{ value|safe }};
+                        var dates = data.map(item => item.date);
+                        var totals = data.map(item => item.total_content.reduce((a, b) => a + b, 0));
 
+                        var rawKey = '{{ key }}';
+                        var formattedKey = rawKey.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+                        document.getElementById('title-{{ key }}').innerText = formattedKey;
+
+                        Highcharts.chart('highchart-{{ key }}', {
+                            chart: {
+                                type: 'line',
+                                height: 400
+                            },
+                            title: {
+                                text: null
+                            },
+                            xAxis: {
+                                categories: dates
+                            },
+                            yAxis: {
+                                title: {
+                                    text: 'Toplam'
+                                }
+                            },
+                            tooltip: {
+                                valueSuffix: ' İçerik'
+                            },
+                            plotOptions: {
+                                line: {
+                                    dataLabels: {
+                                        enabled: true
+                                    },
+                                    enableMouseTracking: true
+                                }
+                            },
+                            series: [{
+                                name: formattedKey,
+                                data: totals
+                            }],
+                            credits: {
+                                enabled: false
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No data available for this channel.</p>
+{% endif %}
 </body>
 </html>
-
 {% endblock %}
