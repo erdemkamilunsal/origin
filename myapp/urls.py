@@ -3,13 +3,15 @@ from . import views
 from .views import index
 from django.contrib.auth import views as auth_views
 
+
 urlpatterns = [
-    path('', index, name='index'),
+    path('', views.index_view, name='index'),  # Burayı değiştir
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('latest/<str:category>/<str:subcategory>/', views.latest_data, name='latest_data'),
     path('dashboard/<str:channel_name>/', views.channel_dashboard, name='channel_dashboard'),
     path('most_engaged/<str:category>/<str:subcategory>/<str:source>/', views.most_engaged_content, name='most_engaged_content'),
     path('youtube_channel/', views.youtube_channel_id_view, name='youtube_channel'),
+
 ]
 

@@ -1,103 +1,129 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ channel_name }} Dashboard</title>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <style>
-        .chart-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-        .chart {
-            width: 48%;
-            margin-bottom: 20px;
-        }
-        .chart-card {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            padding: 16px;
-            transition: box-shadow 0.3s ease;
-        }
-        .chart-card:hover {
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-        }
-        .chart-title {
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-    </style>
-</head>
-<body>
+{% load static %}
 
-{% if social_media_data %}
-    <div id="chart-container" class="chart-container">
-        {% for key, value in social_media_data.items %}
-            <div class="chart">
-                <div class="chart-card">
-                    <div class="chart-title" id="title-{{ key }}"></div>
-                    <div id="highchart-{{ key }}" style="height: 400px;"></div>
-                    <script>
-                        var data = {{ value|safe }};
-                        var dates = data.map(item => item.date);
-                        var totals = data.map(item => item.total_content.reduce((a, b) => a + b, 0));
+<style>
+  .container-box {
+    max-width: 1300px;
+    margin: 0 auto 30px;
+    padding: 15px 10px;
+    background-color: #fefefe;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #ddd;
+  }
 
-                        var rawKey = '{{ key }}';
-                        var formattedKey = rawKey.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
-                        document.getElementById('title-{{ key }}').innerText = formattedKey;
+  .cards-wrapper {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 sütun */
+    gap: 8px 19px;
 
-                        Highcharts.chart('highchart-{{ key }}', {
-                            chart: {
-                                type: 'line',
-                                height: 400
-                            },
-                            title: {
-                                text: null
-                            },
-                            xAxis: {
-                                categories: dates
-                            },
-                            yAxis: {
-                                title: {
-                                    text: 'Toplam'
-                                }
-                            },
-                            tooltip: {
-                                valueSuffix: ' İçerik'
-                            },
-                            plotOptions: {
-                                line: {
-                                    dataLabels: {
-                                        enabled: true
-                                    },
-                                    enableMouseTracking: true
-                                }
-                            },
-                            series: [{
-                                name: formattedKey,
-                                data: totals
-                            }],
-                            credits: {
-                                enabled: false
-                            }
-                        });
-                    </script>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-{% else %}
-    <p>No data available for this channel.</p>
-{% endif %}
-</body>
-</html>
+  }
+
+  /* Responsive */
+  @media (max-width: 1200px) {
+    .cards-wrapper {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+  @media (max-width: 900px) {
+    .cards-wrapper {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  @media (max-width: 600px) {
+    .cards-wrapper {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (max-width: 400px) {
+    .cards-wrapper {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .card-item {
+    width: 164px;
+    height: 110px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 3px 6px rgba(13, 110, 253, 0.12);
+    padding: 10px 8px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .card-title {
+    height: 50px;
+    font-weight: 600;
+    text-transform: capitalize;
+    color: #0d6efd;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 10px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .card-subtitle {
+    height: 50px;
+    color: #6c757d;
+    font-weight: 120;
+    text-transform: capitalize;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 15px;
+    text-align: center;
+  }
+
+  .card-date {
+    height: 30px;
+    font-weight: 600;
+    color: #212529;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 10px;
+    text-align: center;
+  }
+
+  .no-data {
+    color: #dc3545;
+    font-weight: 600;
+  }
+</style>
+
+<div class="container-box">
+
+  <div class="cards-wrapper">
+    {% for item in data %}
+      {% if forloop.counter == 15 %}
+        </div> <!-- İlk cards-wrapper kapatılıyor -->
+        <div class="cards-wrapper" style="margin-top: 10px;"> <!-- İkinci satır -->
+      {% endif %}
+
+      <div class="card-item">
+        <div class="card-title">{{ item.source_category|default:"-" }}</div>
+        <div class="card-subtitle">{{ item.selective_part|default:"-" }}</div>
+        <div class="card-date">
+          {% if item.latest_time %}
+            {{ item.latest_time|date:"Y-m-d H:i" }}
+          {% else %}
+            <span class="no-data">Veri yok</span>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <p style="grid-column: 1 / -1; text-align:center;">Gösterilecek veri bulunamadı.</p>
+    {% endfor %}
+  </div>
+</div>
+
 {% endblock %}

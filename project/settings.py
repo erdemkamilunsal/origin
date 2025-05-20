@@ -73,6 +73,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'myapp.views.base_context',
                 'myapp.context_processors.last_scrape_time',
+
+
             ],
         },
     },

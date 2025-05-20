@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 import pytz
 import os
 import django
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from unidecode import unidecode
 from django.core.management.base import BaseCommand
 from myapp.models import MostSharedContent, ScraperLog, LatestData, Latest7Days
@@ -131,7 +130,6 @@ def fetch_most_shared(session, base_url, selective, kanallar):
             source_category=base_url,
             selective_part=selective,
             source=channel,
-            created_time=today.date()  # Bugün tarihli veriler silinecek
         ).delete()
 
         for entry in all_data:
@@ -161,6 +159,7 @@ def fetch_most_shared(session, base_url, selective, kanallar):
 
             MostSharedContent.objects.create(**post_data)
             print(f"✅ {selective} - {channel} için yeni veri eklendi: {post_data['name']} - {post_data['create_time']}")
+
 class Command(BaseCommand):
     help = "Sosyal medya verilerini çekip kaydeder."
 
@@ -207,6 +206,7 @@ class Command(BaseCommand):
                     fetch_yesterday_data(session, base_url, selective, channels_to_find, today)
                     fetch_last_7_days(session, base_url, selective, channels_to_find, today)
                     fetch_most_shared(session, base_url, selective, kanallar)
+
 
         end_time = time.time()
         print(f"Scraper tamamlandı! Toplam süre: {end_time - start_time:.2f} saniye.")

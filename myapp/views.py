@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Max
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 import json
@@ -13,6 +14,9 @@ import matplotlib.pyplot as plt
 import io
 import base64
 from django.utils import timezone
+from django.core.cache import cache
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
 from .forms import YouTubeURLForm
 import requests
 import re
@@ -171,7 +175,6 @@ def base_context(request):
         'channels_to_find': channels_to_find
     }
 
-
 def get_channel_id(url):
     try:
         # YouTube kanal sayfasını çek
@@ -190,7 +193,6 @@ def get_channel_id(url):
     except requests.exceptions.RequestException as e:
         return None
 
-
 def youtube_channel_id_view(request):
     channel_id = None
     error = None
@@ -206,4 +208,17 @@ def youtube_channel_id_view(request):
                 error = str(e)
 
     return render(request, 'youtube_channel.html', {'channel_id': channel_id, 'error': error})
+
+def index_view(request):
+    # source_category ve selective_part bazında en son created_time'u alıyoruz
+    data = (
+        LatestData.objects
+        .values('source_category', 'selective_part')
+        .annotate(latest_time=Max('created_time'))
+        .order_by('source_category', 'selective_part')
+    )
+
+    return render(request, 'index.html', {'data': data})
+
+
 

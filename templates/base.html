@@ -383,7 +383,8 @@
         <ul class="navbar-nav ms-auto d-flex align-items-center"> <!-- d-flex ve align-items-center ile hizalama -->
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <span class="navbar-text">{{ user.username|capfirst }}</span> <!-- Kullanıcı adı ilk harf büyük -->
+                        <span class="navbar-text" style="color: white;">{{ user.username|capfirst }}</span>
+<!-- Kullanıcı adı ilk harf büyük -->
                     </li>
                     <li class="nav-item ms-3"> <!-- ms-3 ile boşluk ekledik -->
                         <a href="{% url 'logout' %}" class="btn btn-danger">Çıkış Yap</a> <!-- Kızarık çıkış butonu -->
@@ -401,7 +402,9 @@
         <span style="font-size: 14px; color: #333;">
           Last Update: {{ last_scrape_time }}
         </span>
+
         </div>
+
         <div class="mt-4">
             {% block content %}
             {% endblock %}
