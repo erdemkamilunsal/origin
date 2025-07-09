@@ -1,0 +1,8 @@
+runtime: python310
+
+entrypoint: gunicorn project.wsgi
+
+instance_class: F1
+
+env_variables:
+  DJANGO_SETTINGS_MODULE: "project.settings"

@@ -9,7 +9,6 @@ import django
 from unidecode import unidecode
 from django.core.management.base import BaseCommand
 from myapp.models import MostSharedContent, ScraperLog, LatestData, Latest7Days
-
 def update_scraper_log():
     log_entry, _ = ScraperLog.objects.get_or_create(id=1)
     log_entry.save()
@@ -166,13 +165,13 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         start_time = time.time()
         base_urls = {
-            "finans": ["corporate","selective", "primary"],
-            "mey": ["primary", "selective"],
-            "snacks-tr": ["corporate", "primary", "selective", "corprimary", "pladis_categories"],
-            "mey-international": ["primary"],
-            "fastfood-tr": ["corporate"],
-            "transportation-tr": ["corporate"],
-            "airtravel-tr": ["corporate"]
+            "finans": ["corporate","selective", "primary"]
+            #"mey": ["primary", "selective"]
+            #"snacks-tr": ["corporate", "primary", "selective", "corprimary", "pladis_categories"],
+            #"mey-international": ["primary"],
+            #"fastfood-tr": ["corporate"],
+            #"transportation-tr": ["corporate"],
+            #"airtravel-tr": ["corporate"]
         }
         channels_to_find = {
             "twitter", "facebook", "facebook_page_comment", "facebook_page_like",
@@ -204,8 +203,8 @@ class Command(BaseCommand):
 
                 for selective in selective_parts:
                     fetch_yesterday_data(session, base_url, selective, channels_to_find, today)
-                    fetch_last_7_days(session, base_url, selective, channels_to_find, today)
-                    fetch_most_shared(session, base_url, selective, kanallar)
+                    #fetch_last_7_days(session, base_url, selective, channels_to_find, today)
+                    #fetch_most_shared(session, base_url, selective, kanallar)
 
 
         end_time = time.time()
