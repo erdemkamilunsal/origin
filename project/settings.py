@@ -1,6 +1,9 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url
+
+
 
 # Proje ana dizini
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -11,7 +14,7 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 # Güvenlik ve genel ayarlar
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 't')
+DEBUG = True
 
 ALLOWED_HOSTS = [host.strip() for host in os.getenv("ALLOWED_HOSTS", "").split(",") if host.strip()]
 
@@ -63,17 +66,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'  # Proje ismine göre güncelle
 
-# Veritabanı ayarları (.env’den okunuyor)
+import os
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'ENGINE': 'django.db.backends.postgresql',  # Bu kesin olmalı
+        'NAME': os.getenv('DB_NAME'),               # DB adı .env'den okunuyor
+        'USER': os.getenv('DB_USER'),               # Kullanıcı adı .env'den
+        'PASSWORD': os.getenv('DB_PASSWORD'),       # Şifre .env'den
+        'HOST': os.getenv('DB_HOST'),               # Host .env'den
+        'PORT': os.getenv('DB_PORT'),               # Port .env'den
     }
 }
+
+
 
 # Şifre doğrulama
 AUTH_PASSWORD_VALIDATORS = [
@@ -95,6 +101,7 @@ USE_TZ = True
 # Statik dosyalar
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # BU SATIRI EKLE
 
 # Varsayılan otomatik alan
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
