@@ -15,7 +15,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+
 
 
 
@@ -68,14 +69,15 @@ WSGI_APPLICATION = 'project.wsgi.application'  # Proje ismine göre güncelle
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',  # Bu kesin olmalı
-        'NAME': os.getenv('DB_NAME'),               # DB adı .env'den okunuyor
-        'USER': os.getenv('DB_USER'),               # Kullanıcı adı .env'den
-        'PASSWORD': os.getenv('DB_PASSWORD'),       # Şifre .env'den
-        'HOST': os.getenv('DB_HOST'),               # Host .env'den
-        'PORT': os.getenv('DB_PORT'),               # Port .env'den
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
+
 
 
 
