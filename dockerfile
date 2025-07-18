@@ -1,19 +1,15 @@
-# Temel python imajı
 FROM python:3.11-slim
 
-# Çalışma dizinini ayarla
+ENV PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
-# Gereksinimleri kopyala ve yükle
-COPY requirements.txt .
+COPY requirements.txt /app/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Proje dosyalarını kopyala
-COPY . .
+COPY . /app/
 
-# Django için gerekli port
 ENV PORT 8080
 
-# Uygulamayı çalıştır
-CMD ["gunicorn", "project.wsgi:project", "--bind", "0.0.0.0:8080"]
+CMD ["gunicorn", "project.wsgi:application", "--bind", "0.0.0.0:8080"]
