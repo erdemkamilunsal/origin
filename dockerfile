@@ -1,5 +1,8 @@
 FROM python:3.11-slim
 
+COPY .env .env
+
+
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
@@ -15,4 +18,5 @@ RUN python manage.py collectstatic --noinput
 # RUN python manage.py migrate
 
 ENV PORT=8080
-CMD gunicorn project.wsgi:application --bind 0.0.0.0:$PORT
+CMD ["gunicorn", "project.wsgi:application", "--bind", "0.0.0.0:8080"]
+

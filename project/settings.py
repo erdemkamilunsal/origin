@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from dotenv import load_dotenv
+load_dotenv()
 
 
 
@@ -67,17 +69,21 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'project.wsgi.application'  # Proje ismine göre güncelle
+import os
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
+        'HOST': os.getenv('DB_HOST'),
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT'),
     }
 }
+
+SECRET_KEY = os.getenv('SECRET_KEY')
+
 
 
 
