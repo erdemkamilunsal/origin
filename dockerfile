@@ -1,15 +1,18 @@
 FROM python:3.11-slim
 
+ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-COPY requirements.txt /app/
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-COPY . /app/
+COPY . .
 
-ENV PORT 8080
+# Migrate & collectstatic (isteğe bağlı ama önerilir)
+RUN python manage.py collectstatic --noinput
+# RUN python manage.py migrate
 
-CMD ["gunicorn", "project.wsgi:application", "--bind", "0.0.0.0:8080"]
+ENV PORT=8080
+CMD gunicorn project.wsgi:application --bind 0.0.0.0:$PORT
