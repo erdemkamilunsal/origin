@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-import dj_database_url
 
 
 
@@ -16,7 +15,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = [host.strip() for host in os.getenv("ALLOWED_HOSTS", "").split(",") if host.strip()]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
 
 
 # Uygulamalar
@@ -65,8 +65,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'project.wsgi.application'  # Proje ismine göre güncelle
-
-import os
 
 DATABASES = {
     'default': {
