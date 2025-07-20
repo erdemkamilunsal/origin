@@ -1,22 +1,18 @@
 FROM python:3.11-slim
 
-COPY .env .env
+# Ortam değişkenleri
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
+# Çalışma dizini
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
-
+# Gereken dosyaları kopyala
 COPY . .
 
-# Migrate & collectstatic (isteğe bağlı ama önerilir)
-RUN python manage.py collectstatic --noinput
-# RUN python manage.py migrate
+# Bağımlılıkları kur
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
-ENV PORT=8080
-CMD ["gunicorn", "project.wsgi:application", "--bind", "0.0.0.0:8080"]
-
+# Gunicorn ile başlat
+CMD ["gunicorn", "project.wsgi:application", "--bind", "0.0.0.0:8000"]
